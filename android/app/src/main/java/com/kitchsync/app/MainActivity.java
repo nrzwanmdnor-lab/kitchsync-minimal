@@ -1,10 +1,11 @@
 package com.kitchsync.app;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -44,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.d("KitchSyncJS", consoleMessage.message() + " ["
+                        + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "]");
+                return true;
+            }
+
+            @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
                                               FileChooserParams fileChooserParams) {
                 if (uploadMessage != null) {
@@ -62,19 +70,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Handle Android back button navigation
+        // Close modal if open on back press, else navigate back in webview, else exit
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (webView.canGoBack()) {
-                    webView.goBack();
-                } else {
-                    finish();
-                }
+                webView.evaluateJavascript("if(document.querySelector('.ov')) { closeModal(); true; } else { false; }", value -> {
+                    if (!"true".equals(value)) {
+                        if (webView.canGoBack()) {
+                            webView.goBack();
+                        } else {
+                            finish();
+                        }
+                    }
+                });
             }
         });
 
-        // Load self-contained KitchSync Minimal single-page application
         webView.loadUrl("file:///android_asset/index.html");
     }
 
@@ -83,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_CHOOSER_RESULT_CODE) {
             if (uploadMessage == null) return;
-            uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+            if (resultCode == RESULT_OK && data != null) {
+                uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+            } else {
+                uploadMessage.onReceiveValue(null);
+            }
             uploadMessage = null;
         }
     }
