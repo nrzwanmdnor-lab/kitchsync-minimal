@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Hjh Maimunah KitchSync · Mobile Catering KDS</title>
+<title>Hjh Maimunah KitchSync · KDS & Catering Batch Aggregator</title>
 <style>
 :root{
   --bg:#09090b;--bg2:#0c0c0e;--panel:#18181b;--panel2:#1f1f23;--line:#27272a;--line2:#3f3f46;
@@ -18,16 +18,15 @@
 html,body{height:100%;background:#040406;color:var(--tx);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 body{display:flex;align-items:center;justify-content:center;padding:12px;min-height:100vh;min-height:100dvh;background-image:radial-gradient(circle at 50% 15%,#1c1c24 0%,#040406 75%)}
 
-/* Dedicated Android Phone Device Frame on Desktop */
+/* Device frame on desktop, edge-to-edge on mobile */
 .phone-frame{
-  width:412px;max-width:100%;height:892px;max-height:calc(100dvh - 24px);
+  width:420px;max-width:100%;height:900px;max-height:calc(100dvh - 24px);
   background:var(--bg);border:11px solid #1c1c20;border-radius:46px;
   box-shadow:0 30px 90px -15px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.07);
   display:flex;flex-direction:column;overflow:hidden;position:relative;
-  transform:translateZ(0); /* scopes fixed modals inside phone frame on desktop */
+  transform:translateZ(0);
 }
 
-/* Simulated Android System Status Bar (hidden on real mobile screens) */
 .status-bar{
   height:30px;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;
   padding:0 18px;font-size:11px;font-weight:700;color:#e4e4e7;letter-spacing:.02em;flex-shrink:0;user-select:none;z-index:25;
@@ -35,15 +34,13 @@ body{display:flex;align-items:center;justify-content:center;padding:12px;min-hei
 .punch-hole{width:11px;height:11px;border-radius:50%;background:#000;box-shadow:inset 0 0 0 1.5px #18181b}
 .status-icons{display:flex;align-items:center;gap:6px;font-size:11px}
 .status-icons svg{fill:currentColor}
-
-/* Android Gesture Bar */
 .gesture-bar{height:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:25}
 .gesture-pill{width:96px;height:4px;border-radius:99px;background:#52525b}
 
 #app{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:var(--bg)}
 
 button,input,select,textarea{font:inherit;color:inherit}
-input,select,textarea{background:var(--bg);border:1px solid var(--line2);border-radius:10px;min-height:42px;padding:0 12px;outline:none;width:100%;font-size:15px}
+input,select,textarea{background:var(--bg);border:1px solid var(--line2);border-radius:10px;min-height:40px;padding:0 12px;outline:none;width:100%;font-size:14.5px}
 textarea{padding:10px 12px;resize:vertical;line-height:1.45}
 input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(56,189,248,.18)}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mu) 50%),linear-gradient(135deg,var(--mu) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
@@ -51,7 +48,7 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 
 .btn{
   background:var(--panel2);border:1px solid var(--line2);border-radius:10px;
-  color:var(--tx);min-height:42px;padding:0 14px;font-weight:650;font-size:13px;
+  color:var(--tx);min-height:40px;padding:0 14px;font-weight:650;font-size:13px;
   display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;
   transition:all .12s ease;user-select:none;white-space:nowrap;
 }
@@ -62,28 +59,37 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .btn.ok{background:#15803d;border-color:#22c55e;color:#fff}
 .btn.danger{background:#b91c1c;border-color:#ef4444;color:#fff}
 .btn.ghost{background:transparent;border-color:transparent;color:var(--mu)}
-.btn.sm{min-height:34px;padding:0 10px;font-size:12px;border-radius:8px}
-.btn.icon{width:38px;height:38px;min-height:38px;padding:0;border-radius:9px}
+.btn.sm{min-height:32px;padding:0 10px;font-size:11.5px;border-radius:8px}
+.btn.icon{width:36px;height:36px;min-height:36px;padding:0;border-radius:9px}
+
+/* Prominent High-Contrast Clear Button */
+.btn-clear{
+  background:#15803d;border:1.5px solid #4ade80;color:#ffffff;
+  font-weight:800;font-size:12.5px;letter-spacing:.02em;border-radius:8px;
+  padding:0 12px;min-height:36px;display:inline-flex;align-items:center;justify-content:center;
+  gap:5px;box-shadow:0 3px 12px rgba(34,197,94,.35);cursor:pointer;
+}
+.btn-clear:active{background:#166534;transform:scale(.96)}
 
 /* Topbar */
 .topbar{
   background:var(--bg2);border-bottom:1px solid var(--line);
   padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:20;
 }
-.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;letter-spacing:-.01em;min-width:0;flex-shrink:0}
-.brand .logo{width:30px;height:30px;border-radius:8px;background:#e11d48;display:grid;place-items:center;font-size:16px}
-.brand small{display:block;font-size:10px;color:var(--mu);font-weight:600;letter-spacing:0}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;letter-spacing:-.01em;min-width:0;flex-shrink:0}
+.brand .logo{width:28px;height:28px;border-radius:8px;background:#e11d48;display:grid;place-items:center;font-size:15px}
+.brand small{display:block;font-size:9.5px;color:var(--mu);font-weight:600;letter-spacing:0}
 
 /* Batch Chips Scroller */
-.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
+.chips{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
 .chips::-webkit-scrollbar{display:none}
 .chip{
   white-space:nowrap;background:var(--panel);border:1px solid var(--line2);
-  border-radius:99px;min-height:30px;padding:0 10px;font-size:11.5px;font-weight:650;
+  border-radius:99px;min-height:28px;padding:0 9px;font-size:11px;font-weight:650;
   color:var(--mu);display:inline-flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;
 }
 .chip.on{background:var(--tx);color:#09090b;border-color:var(--tx)}
-.chip .n{background:rgba(255,255,255,.14);padding:1px 6px;border-radius:99px;font-size:10.5px}
+.chip .n{background:rgba(255,255,255,.14);padding:1px 5px;border-radius:99px;font-size:10px}
 .chip.on .n{background:rgba(0,0,0,.15);color:#000}
 
 /* Department Sub-bar */
@@ -93,39 +99,39 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 }
 .dept-bar::-webkit-scrollbar{display:none}
 .dept-chip{
-  white-space:nowrap;min-height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line2);
-  background:transparent;color:var(--mu);font-weight:700;font-size:11.5px;cursor:pointer;
+  white-space:nowrap;min-height:28px;padding:0 9px;border-radius:7px;border:1px solid var(--line2);
+  background:transparent;color:var(--mu);font-weight:700;font-size:11px;cursor:pointer;
   display:flex;align-items:center;gap:5px;flex-shrink:0;
 }
 .dept-chip.on{background:#27272a;color:var(--tx);border-color:var(--line2)}
-.dept-chip .n{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:99px;font-size:10px}
+.dept-chip .n{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:99px;font-size:9.5px}
 .dept-chip.dept-drnk.on{background:#0369a1;color:#fff;border-color:#38bdf8}
 .dept-chip.dept-dsrt.on{background:#be185d;color:#fff;border-color:#f472b6}
 
-/* Catering Format Sub-bar (MBC, LB, BSU, BB) */
+/* Catering Format Sub-bar */
 .fmt-bar{
-  display:flex;gap:5px;padding:5px 10px;background:#0f0f12;border-bottom:1px solid var(--line);
+  display:flex;gap:4px;padding:5px 10px;background:#0f0f12;border-bottom:1px solid var(--line);
   overflow-x:auto;scrollbar-width:none;flex-shrink:0;align-items:center;
 }
 .fmt-bar::-webkit-scrollbar{display:none}
 .fmt-chip{
   white-space:nowrap;min-height:26px;padding:0 8px;border-radius:6px;border:1px solid var(--line);
-  background:transparent;color:var(--mu);font-weight:700;font-size:11px;cursor:pointer;
+  background:transparent;color:var(--mu);font-weight:700;font-size:10.5px;cursor:pointer;
   display:flex;align-items:center;gap:4px;flex-shrink:0;
 }
 .fmt-chip.on{background:#27272a;color:#fff;border-color:#52525b}
-.fmt-chip .n{background:rgba(255,255,255,.1);padding:0 4px;border-radius:4px;font-size:9.5px}
+.fmt-chip .n{background:rgba(255,255,255,.1);padding:0 4px;border-radius:4px;font-size:9px}
 
 /* Format Badges */
 .fmt-bdg{
-  display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 6px;
-  border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.03em;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:3px;height:19px;padding:0 6px;
+  border-radius:4px;font-size:9.5px;font-weight:800;letter-spacing:.03em;white-space:nowrap;
 }
 .fmt-mbc{background:#0e7490;color:#e0f2fe;border:1px solid #0284c7}
 .fmt-lb {background:#b45309;color:#fef3c7;border:1px solid #d97706}
 .fmt-bsu{background:#6d28d9;color:#ede9fe;border:1px solid #7c3aed}
 .fmt-bb {background:#1d4ed8;color:#dbeafe;border:1px solid #2563eb}
-.fmt-ala{background:#3f3f46;color:#e4e4e7;border:1px solid #52525b}
+.fmt-ac {background:#3f3f46;color:#e4e4e7;border:1px solid #52525b}
 
 /* Mode Switch Bar (Cook vs Pack) */
 .mode-bar{
@@ -133,7 +139,7 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
   background:#141417;border-bottom:1px solid var(--line);font-size:11px;flex-shrink:0;
 }
 .mode-toggle{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:6px;padding:2px;gap:2px}
-.mode-toggle button{border:0;background:transparent;color:var(--mu);padding:2px 7px;font-size:10.5px;font-weight:700;border-radius:4px;cursor:pointer}
+.mode-toggle button{border:0;background:transparent;color:var(--mu);padding:2px 7px;font-size:10px;font-weight:700;border-radius:4px;cursor:pointer}
 .mode-toggle button.on{background:#27272a;color:#fff}
 
 /* Main Panes */
@@ -146,75 +152,78 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .scroll{overflow-y:auto;flex:1;min-height:0;padding:10px 10px 40px;-webkit-overflow-scrolling:touch}
 
 /* Batch Prep Container */
-.prep-wrap{display:flex;flex-direction:column;gap:12px}
+.prep-wrap{display:flex;flex-direction:column;gap:10px}
 .batch{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .batch-head{
-  padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
 }
-.bt-time{font-weight:900;font-size:15px;color:var(--tx);display:flex;align-items:center;gap:6px}
-.bt-dept-tag{font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
-.bt-deliv{font-size:11px;color:#38bdf8;background:rgba(56,189,248,.12);padding:2px 6px;border-radius:5px;font-weight:700}
-.bt-label{font-size:11.5px;color:var(--mu);width:100%;display:flex;align-items:center;gap:4px;margin-top:2px}
+.bt-time{font-weight:900;font-size:14.5px;color:var(--tx);display:flex;align-items:center;gap:6px}
+.bt-dept-tag{font-size:9.5px;font-weight:800;padding:2px 5px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+.bt-deliv{font-size:10.5px;color:#38bdf8;background:rgba(56,189,248,.12);padding:2px 5px;border-radius:4px;font-weight:700}
+.bt-label{font-size:11px;color:var(--mu);width:100%;display:flex;align-items:center;gap:4px;margin-top:2px}
 .bt-stats{color:#cbd5e1;font-weight:600}
 
 /* Station Sections in Prep */
 .stgrid{display:flex;flex-direction:column;gap:8px;padding:8px}
 .stcol{border-radius:10px;background:var(--bg2);border:1px solid var(--line);overflow:hidden}
 .st-head{
-  padding:6px 10px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  padding:6px 10px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
   display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);
   background:rgba(255,255,255,.02);
 }
 .dish{
-  padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer;
-  display:flex;flex-direction:column;gap:4px;transition:background .1s;
+  padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer;
+  display:flex;flex-direction:column;gap:3px;transition:background .1s;
 }
 .dish:last-child{border-bottom:none}
 .dish:active{background:rgba(255,255,255,.04)}
 .dish.done{opacity:.35;background:rgba(0,0,0,.25)}
 .dish.done .dish-name{text-decoration:line-through;color:var(--mu)}
-.dish-top{display:flex;align-items:center;gap:8px}
-.chk{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--line2);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--ok);flex-shrink:0}
+.dish-top{display:flex;align-items:center;gap:7px}
+.chk{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--line2);display:grid;place-items:center;font-size:11px;font-weight:900;color:var(--ok);flex-shrink:0}
 .dish.done .chk{background:var(--ok);border-color:var(--ok);color:#09090b}
-.dish-name{font-weight:750;font-size:13.5px;flex:1;line-height:1.25}
-.dish-qty{font-weight:900;font-size:16px;color:#facc15;white-space:nowrap}
-.dish-qty small{font-size:10.5px;color:var(--mu);margin-left:3px;font-weight:700}
-.alloc{display:flex;flex-direction:column;gap:3px;margin-left:28px;padding-top:2px}
+.dish-name{font-weight:750;font-size:13px;flex:1;line-height:1.25}
+.dish-qty{font-weight:900;font-size:15px;color:#facc15;white-space:nowrap}
+.dish-qty small{font-size:10px;color:var(--mu);margin-left:3px;font-weight:700}
+.alloc{display:flex;flex-direction:column;gap:2px;margin-left:25px;padding-top:2px}
 .alloc>div{
-  display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--mu);
-  background:rgba(255,255,255,.03);padding:2px 6px;border-radius:4px;
+  display:flex;align-items:center;justify-content:space-between;font-size:10.5px;color:var(--mu);
+  background:rgba(255,255,255,.03);padding:2px 5px;border-radius:4px;
 }
 .alloc>div span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:6px;display:flex;align-items:center;gap:4px}
 .alloc>div b{color:#f4f4f5;font-weight:800}
 
-/* Orders Cards */
+/* Active Order Cards */
 .ocard{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  padding:12px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;
+  padding:12px;margin-bottom:9px;display:flex;flex-direction:column;gap:7px;
+  box-shadow:0 3px 12px rgba(0,0,0,.25);
 }
-.ocard.done{opacity:.4;border-color:#22c55e33}
-.ocard .cust{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
-.ocard .meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:11px;color:var(--mu)}
-.ocard .items{font-size:12px;color:var(--mu);line-height:1.4;background:var(--bg2);padding:7px 9px;border-radius:7px;border:1px solid var(--line)}
+.ocard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.ocard .cust{font-weight:800;font-size:14.5px;letter-spacing:-.01em;color:#fff}
+.ocard .phone-link{color:#38bdf8;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:3px;text-decoration:none}
+.ocard .meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:10.5px;color:var(--mu)}
+.ocard .items{font-size:12px;color:var(--mu);line-height:1.45;background:var(--bg2);padding:7px 9px;border-radius:7px;border:1px solid var(--line)}
 .ocard .acts{display:flex;align-items:center;gap:6px;margin-top:2px}
 
-.tag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 6px;border-radius:4px;background:#27272a;color:#d4d4d8;font-size:10.5px;font-weight:700}
+.tag{display:inline-flex;align-items:center;gap:3px;height:19px;padding:0 6px;border-radius:4px;background:#27272a;color:#d4d4d8;font-size:10px;font-weight:700}
 .tag.deliv{background:rgba(56,189,248,.15);color:#38bdf8;font-weight:800}
 .tag.slot{background:rgba(250,204,21,.15);color:#facc15;font-weight:800}
+.tag.disc{background:rgba(239,68,68,.18);color:#f87171;font-weight:800}
 .oid{font-family:ui-monospace,Menlo,monospace;color:#a1a1aa;font-size:10.5px}
 
 /* Ingestion Drop & Buttons */
 .drop{
-  border:1.5px dashed var(--line2);border-radius:var(--r);padding:14px;
-  text-align:center;color:var(--mu);font-size:11.5px;cursor:pointer;
+  border:1.5px dashed var(--line2);border-radius:var(--r);padding:12px;
+  text-align:center;color:var(--mu);font-size:11px;cursor:pointer;
   transition:.15s;margin-bottom:8px;background:rgba(255,255,255,.01);
 }
 .drop:hover,.drop.drag{border-color:var(--acc);color:var(--tx);background:rgba(56,189,248,.05)}
-.drop b{display:block;color:var(--tx);font-size:13px;margin-bottom:2px}
-.ingest{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px}
-.ingest .btn{min-height:48px;padding:4px;flex-direction:column;gap:2px;font-size:10.5px;border-radius:8px}
-.ingest .btn i{font-style:normal;font-size:17px}
+.drop b{display:block;color:var(--tx);font-size:12.5px;margin-bottom:2px}
+.ingest{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
+.ingest .btn{min-height:44px;padding:4px;flex-direction:column;gap:2px;font-size:10px;border-radius:8px}
+.ingest .btn i{font-style:normal;font-size:15px}
 
 /* Bottom Navigation Bar */
 .bnav{
@@ -234,24 +243,28 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
   font-size:9px;font-weight:900;padding:1px 4px;border-radius:99px;min-width:14px;line-height:1;
 }
 
-/* Settings Module */
-.settings{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+/* Dedicated Settings Page */
+.settings{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg)}
 .snav{display:flex;overflow-x:auto;padding:6px 8px;border-bottom:1px solid var(--line);background:var(--bg2);gap:4px;flex-shrink:0;scrollbar-width:none}
 .snav::-webkit-scrollbar{display:none}
 .snav button{white-space:nowrap;min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--mu);font-weight:700;font-size:11.5px;cursor:pointer}
 .snav button.on{background:var(--tx);color:#09090b;border-color:var(--tx)}
-.scontent{overflow-y:auto;padding:10px 10px 30px;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
+.scontent{overflow-y:auto;padding:12px;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
 .shead{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .shead h1{font-size:16px;letter-spacing:-.02em}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px}
 .card h3{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
 .mcards{display:flex;flex-direction:column;gap:6px}
-.mcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.mcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:5px;cursor:pointer;position:relative}
+.mcard.discontinued{opacity:.5;border-color:#ef444455}
+.mcard:hover{border-color:var(--line2)}
+.mcard-header{display:flex;align-items:center;gap:7px}
+.mcard-chk{width:18px;height:18px;cursor:pointer;accent-color:var(--acc)}
 .al{display:flex;flex-wrap:wrap;gap:3px}
 .al span{font-size:10px;background:#27272a;color:#d4d4d8;padding:1px 5px;border-radius:4px}
 .seg{display:inline-flex;background:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:2px;gap:2px;flex-wrap:wrap}
-.seg button{min-height:30px;padding:0 8px;border:0;border-radius:6px;background:transparent;cursor:pointer;font-weight:650;font-size:11.5px;color:var(--mu)}
+.seg button{min-height:30px;padding:0 8px;border:0;border-radius:6px;background:transparent;cursor:pointer;font-weight:650;font-size:11px;color:var(--mu)}
 .seg button.on{background:var(--panel2);color:var(--tx);box-shadow:0 0 0 1px var(--line2)}
 .sw{display:flex;align-items:center;gap:8px;min-height:36px;cursor:pointer;user-select:none;font-weight:600;font-size:12.5px}
 .sw input{display:none}
@@ -259,8 +272,6 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .sw i::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
 .sw input:checked+i{background:var(--ok)}.sw input:checked+i::after{left:20px}
 .note{font-size:11px;color:var(--mu);background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:8px 10px;line-height:1.4}
-.log{background:#000;border:1px solid var(--line);border-radius:8px;padding:8px;font:10.5px/1.45 ui-monospace,Menlo,Consolas,monospace;color:#a3e635;height:160px;overflow:auto;white-space:pre-wrap;word-break:break-all}
-.preview-pane{background:#111113;border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;margin-top:10px}
 
 /* Thermal Paper Display */
 .paper{background:#fdfdf8;color:#111;font:10px/1.34 ui-monospace,"Courier New",Menlo,Consolas,monospace;padding:10px 8px 16px;box-shadow:0 8px 30px rgba(0,0,0,.5);position:relative;overflow:hidden;max-width:100%}
@@ -274,7 +285,7 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .ov{position:absolute;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(3px);display:flex;flex-direction:column;z-index:60;animation:fade .15s}
 .modal{background:var(--panel);width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
 .mh{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--bg2)}
-.mt{font-weight:800;font-size:15px;letter-spacing:-.01em}.ms{font-size:11px;color:var(--mu)}
+.mt{font-weight:800;font-size:14.5px;letter-spacing:-.01em}.ms{font-size:11px;color:var(--mu)}
 .mb{padding:10px 12px;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
 .mf{display:flex;align-items:center;gap:6px;padding:8px 12px;border-top:1px solid var(--line);flex-shrink:0;flex-wrap:wrap;background:var(--bg2)}
 @keyframes fade{from{opacity:0}}
@@ -289,7 +300,6 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .scan-left{flex:1;display:flex;flex-direction:column;min-height:0;background:#050506}
 .scan-left .pv{flex:1;min-height:0;display:grid;place-items:center;overflow:auto;padding:8px;position:relative}
 .scan-left img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
-.scan-left object{width:100%;height:100%;border:0;border-radius:6px;background:#fff}
 .word-pv{background:#fff;color:#0f172a;border-radius:8px;padding:12px;width:100%;max-height:100%;overflow:auto;font:12px/1.45 Calibri,Inter,sans-serif;border-top:4px solid #2563eb}
 .word-pv h4{color:#1e40af;font-size:13.5px;margin-bottom:4px}
 .word-pv pre{white-space:pre-wrap;font:11px/1.4 ui-monospace,Menlo,monospace;color:#1e293b;margin-top:6px;padding-top:6px;border-top:1px solid #e2e8f0}
@@ -297,7 +307,6 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 @keyframes scan{to{top:calc(100% - 3px)}}
 .scan-right{display:flex;flex-direction:column;flex:1;min-height:0}
 .oform{display:grid;grid-template-columns:1fr;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);flex-shrink:0}
-.oform .row4{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .lines{overflow-y:auto;flex:1;min-height:0;padding:8px 12px 14px;-webkit-overflow-scrolling:touch}
 .ln{display:grid;grid-template-columns:34px 1fr 55px;gap:5px;align-items:center;padding:6px;border:1px solid var(--line);border-radius:8px;margin-bottom:5px;background:var(--bg2);border-left:3.5px solid var(--lc)}
 .ln.lv-exact{--lc:var(--ok)}.ln.lv-fuzzy{--lc:var(--warn)}.ln.lv-unmapped{--lc:var(--err)}.ln.lv-manual{--lc:var(--info)}
@@ -327,14 +336,12 @@ label.f{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-t
 .empty h3{color:var(--tx);font-size:15px;margin-top:2px}
 .empty div{font-size:12px;max-width:260px}
 
-/* Drag overlay */
 .dropall{display:none;position:fixed;inset:0;background:rgba(2,132,199,.92);z-index:999;place-items:center;color:#fff;font-size:20px;font-weight:900;text-align:center;padding:24px;pointer-events:none}
 .dropall.drag{display:grid}
 
 .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
 .spacer{flex:1}
 
-/* Seamless Full-Bleed on Real Mobile Phones (viewport <= 480px) */
 @media (max-width: 480px), (pointer: coarse) {
   body{padding:0!important;background:var(--bg)!important}
   .phone-frame{width:100%!important;height:100%!important;height:100dvh!important;max-height:100dvh!important;border:none!important;border-radius:0!important;box-shadow:none!important}
@@ -360,7 +367,7 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
 <body>
 
 <div class="phone-frame">
-  <!-- Android Status Bar with Clock & 5G Indicator -->
+  <!-- Android Status Bar -->
   <div class="status-bar">
     <span id="status-time">09:41</span>
     <span class="punch-hole"></span>
@@ -372,31 +379,36 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
   </div>
 
   <div id="app">
-    <!-- Mobile Topbar with Brand, Batch Scroller, and Quick Print -->
+    <!-- Topbar with Live Brand, Batch Scroller, History, and Isolated Settings Gear Button -->
     <header class="topbar">
-      <div class="brand"><div class="logo">🍛</div><div>Hjh Maimunah<small>Catering KDS</small></div></div>
+      <div class="brand" onclick="setMobilePane('prep')" style="cursor:pointer">
+        <div class="logo">🍛</div>
+        <div>Hjh Maimunah<small>Catering KDS</small></div>
+      </div>
       <div class="chips" id="slot-chips"></div>
       <div class="spacer"></div>
-      <button class="btn sm icon" id="btn-print-top" onclick="openPrint({slot:UI.slot,dept:UI.prepDept})" title="Print Station Ticket">🖨️</button>
+      <button class="btn sm icon ghost" onclick="openHistoryModal()" title="Archived Prep History">📜</button>
+      <button class="btn sm icon ghost" onclick="openPrint({slot:UI.slot,dept:UI.prepDept})" title="Print Station Ticket">🖨️</button>
+      <button class="btn sm icon" id="btn-settings-top" onclick="setMobilePane(UI.pane === 'settings' ? 'prep' : 'settings')" title="Dedicated Settings">⚙️</button>
     </header>
 
-    <!-- Pane 1: Kitchen Prep Lists (Hot Kitchen, Drinks Bar, Dessert Station) -->
+    <!-- Operational View 1: Live Prep Station Columns & Batch Target Summaries -->
     <main class="pane" id="pane-prep">
       <div class="pane-head">
-        <h2>Prep Lists <span class="mu2" style="font-size:11px;font-weight:400">(Delivery − 1.5h)</span></h2>
+        <h2>Live Station Prep Columns</h2>
         <span class="spacer"></span>
-        <button class="btn sm ghost" onclick="resetPrepChecks()">↺ Reset</button>
+        <button class="btn sm ghost" onclick="resetPrepChecks()">↺ Reset Checks</button>
       </div>
 
-      <!-- Station / Department Filter Pills -->
+      <!-- Department / Station Filter Pills -->
       <div class="dept-bar" id="dept-bar"></div>
 
-      <!-- Catering Format Filter Bar (MBC, LB, BSU, BB) -->
+      <!-- Catering Format Filter Bar -->
       <div class="fmt-bar" id="fmt-bar"></div>
 
-      <!-- Kitchen Wok Batch (Exploded) vs Packing Table (Sets) Toggle -->
+      <!-- Batch Target View Switcher (Exploded vs Sets) -->
       <div class="mode-bar">
-        <span style="color:var(--mu)">Batch View:</span>
+        <span style="color:var(--mu);font-size:11px">Station Cooking Target:</span>
         <div class="mode-toggle">
           <button id="mode-btn-cook" class="on" onclick="setPrepMode('cook')">🔥 Cook (Exploded)</button>
           <button id="mode-btn-pack" onclick="setPrepMode('pack')">📦 Pack (Sets)</button>
@@ -406,45 +418,45 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
       <div class="scroll" id="prep-scroll"><div class="prep-wrap" id="prep"></div></div>
     </main>
 
-    <!-- Pane 2: Active Orders & Multi-Channel Ingestion -->
+    <!-- Operational View 2: Active Order Cards with Prominent CLEAR Button & Quick Ingestion -->
     <main class="pane" id="pane-orders" hidden>
       <div class="pane-head">
-        <h2>Ingest Orders</h2>
+        <h2>Active Order Cards</h2>
         <span class="spacer"></span>
-        <span class="mu2" style="font-size:11px">BSU −2h · LB/MBC −1.5h</span>
+        <span class="mu2" id="order-count" style="font-size:11px"></span>
       </div>
-      <div class="drop" id="drop" onclick="$('#f-upload').click()">
-        <b>⬇ Drop Catering Dockets or Word Files</b>JPG · PNG · WebP · PDF · DOCX / DOC
+
+      <div style="padding:8px 10px 0">
+        <!-- Quick Ingest Triggers -->
+        <div class="ingest">
+          <button class="btn pri" onclick="triggerScanSheet()"><i>📷</i>Camera</button>
+          <button class="btn" onclick="triggerWordSheet()"><i>📝</i>Word Doc</button>
+          <button class="btn" onclick="openManual()"><i>✍️</i>Manual</button>
+          <button class="btn acc" onclick="openHistoryModal()"><i>📜</i>Archived</button>
+        </div>
+        <div class="drop" id="drop" onclick="$('#f-upload').click()">
+          <b>⬇ Drop Catering Runsheet / Docket</b>Word (.docx / .doc), PDF, or Docket Photo
+        </div>
       </div>
-      <div class="ingest">
-        <button class="btn" onclick="$('#f-camera').click()"><i>📷</i>Camera</button>
-        <button class="btn" onclick="$('#f-upload').click()"><i>📁</i>Files</button>
-        <button class="btn" onclick="openSampleWord()"><i>📝</i>Word</button>
-        <button class="btn" onclick="openManual()"><i>✍️</i>Manual</button>
-        <button class="btn acc" onclick="openSampleScan()"><i>✨</i>OCR</button>
-      </div>
-      <div class="pane-head" style="margin-top:4px">
-        <h2>Active Catering Orders</h2>
-        <span class="spacer"></span>
-        <span class="mu2" id="order-count" style="font-size:11.5px"></span>
-      </div>
+
       <div class="scroll" id="orders"></div>
     </main>
 
-    <!-- Pane 3: Mobile Settings (Menu, Hardware, Template, Batch Slots) -->
+    <!-- Dedicated Isolated Settings View -->
     <main class="settings" id="pane-settings" hidden>
       <nav class="snav" id="snav">
-        <button data-t="menu" onclick="setTab('menu')">📋 Menu Master</button>
-        <button data-t="hw" onclick="setTab('hw')">🖨️ Printer</button>
-        <button data-t="tpl" onclick="setTab('tpl')">📄 Template</button>
-        <button data-t="slots" onclick="setTab('slots')">🕒 Lead Times</button>
+        <button data-t="menu" class="on" onclick="setTab('menu')">📋 Menu Master</button>
+        <button data-t="hw" onclick="setTab('hw')">🖨️ Printer (9100)</button>
+        <button data-t="slots" onclick="setTab('slots')">🕒 Lead Buffers</button>
+        <button data-t="rules" onclick="setTab('rules')">🔍 Ingestion Rules</button>
+        <button data-t="tpl" onclick="setTab('tpl')">📄 Ticket Layout</button>
       </nav>
       <div class="scontent" id="scontent"></div>
     </main>
 
-    <!-- 5-Tab Thumb-Friendly Bottom Navigation Bar -->
+    <!-- 5-Tab Bottom Navigation -->
     <nav class="bnav" id="bnav">
-      <button data-b="prep" class="on" onclick="setMobilePane('prep')"><span class="ico">🍛</span><span>Prep</span></button>
+      <button data-b="prep" class="on" onclick="setMobilePane('prep')"><span class="ico">🍛</span><span>Live Prep</span></button>
       <button data-b="orders" onclick="setMobilePane('orders')"><span class="ico">🧾</span><span>Orders</span><span class="bdg" id="bnav-cnt">0</span></button>
       <button data-b="scan" onclick="triggerScanSheet()"><span class="ico">📷</span><span>Scan</span></button>
       <button data-b="word" onclick="triggerWordSheet()"><span class="ico">📝</span><span>Word</span></button>
@@ -452,17 +464,15 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
     </nav>
   </div>
 
-  <!-- Android Bottom Gesture Indicator -->
   <div class="gesture-bar"><div class="gesture-pill"></div></div>
-
   <div id="modal-root"></div>
   <div id="toasts"></div>
 </div>
 
 <input type="file" id="f-upload" accept="image/jpeg,image/png,image/webp,application/pdf,.pdf,.docx,.doc,.rtf,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" multiple hidden>
 <input type="file" id="f-camera" accept="image/*" capture="environment" hidden>
-<input type="file" id="f-import" accept=".json,.csv,application/json,text/csv" hidden>
-<div class="dropall" id="dropall">⬇ Drop Images, PDFs, or Word (.docx/.doc) Dockets</div>
+<input type="file" id="f-import-menu" accept=".json,.csv,text/csv,application/json" hidden>
+<div class="dropall" id="dropall">⬇ Drop Ingestion Runsheet or Docket File</div>
 <div id="print-area" style="display:none"></div>
 
 <script>
@@ -480,7 +490,15 @@ const rand = n => Math.floor(Math.random() * n);
 const pick = a => a[rand(a.length)];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hexA = (hex, a) => { const n = parseInt((hex || '#a1a1aa').slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
-function fmtTime(t) { if (!t) return '—'; const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`; }
+
+function fmtTime(t) {
+  if (!t) return '—';
+  const parts = t.split(':').map(Number);
+  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return t;
+  const [h, m] = parts;
+  return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
 function shiftMins(t, deltaMins) {
   if (!t || !t.includes(':')) return '10:00';
   const [h, m] = t.split(':').map(Number);
@@ -488,22 +506,28 @@ function shiftMins(t, deltaMins) {
   return `${String(Math.floor(tot / 60)).padStart(2, '0')}:${String(tot % 60).padStart(2, '0')}`;
 }
 
-/* ============================== Catering Formats Architecture ============================== */
+/* ============================== Catering Formats & Lead Times ============================== */
 const FORMATS = {
-  MBC: { code: 'MBC', name: 'Mini Buffet Catering', icon: '🥘', color: '#0e7490', leadMins: 90 },
-  LB:  { code: 'LB',  name: 'Lunchbox',             icon: '🍱', color: '#b45309', leadMins: 90 },
-  BSU: { code: 'BSU', name: 'Buffet Set Up',        icon: '🍛', color: '#6d28d9', leadMins: 120 },
-  BB:  { code: 'BB',  name: 'Bento Box',            icon: '🍱', color: '#1d4ed8', leadMins: 90 },
-  ALA: { code: 'ALA', name: 'Ala Carte / Retail',   icon: '🛍️', color: '#3f3f46', leadMins: 60 },
+  BSU: { code: 'BSU', name: 'Buffet Set Up',        icon: '🍛', color: '#6d28d9', defaultLead: 120, isCatering: true },
+  MBC: { code: 'MBC', name: 'Mini Buffet Catering', icon: '🥘', color: '#0e7490', defaultLead: 90,  isCatering: true },
+  LB:  { code: 'LB',  name: 'Lunchbox',             icon: '🍱', color: '#b45309', defaultLead: 90,  isCatering: true },
+  BB:  { code: 'BB',  name: 'Bento Box',            icon: '🍱', color: '#1d4ed8', defaultLead: 90,  isCatering: true },
+  AC:  { code: 'AC',  name: 'Ala Carte / Retail',   icon: '🛍️', color: '#3f3f46', defaultLead: 45,  isCatering: false },
 };
 
-// Lead time calculation rule: BSU = Delivery - 2h (120 min), MBC/LB/BB = Delivery - 1.5h (90 min)
+function getLeadBuffer(format = 'LB') {
+  if (S && S.buffers && S.buffers[format] !== undefined) {
+    return Number(S.buffers[format]);
+  }
+  return FORMATS[format]?.defaultLead || 90;
+}
+
 function calcPrepTime(delivTime, format = 'LB') {
-  const lead = FORMATS[format]?.leadMins || 90;
+  const lead = getLeadBuffer(format);
   return shiftMins(delivTime, -lead);
 }
 function calcDelivTime(prepTime, format = 'LB') {
-  const lead = FORMATS[format]?.leadMins || 90;
+  const lead = getLeadBuffer(format);
   return shiftMins(prepTime, lead);
 }
 
@@ -518,7 +542,7 @@ function nowStr() { const d = new Date(); const p = n => String(n).padStart(2, '
 function toast(msg, type = '') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => t.remove(), 2600); }
 function download(name, text, mime) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: mime })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
 
-/* ============================== Hjh Maimunah Menu Master V23 ============================== */
+/* ============================== Default V23 Menu Master Definition ============================== */
 const DEFAULT_CATEGORIES = () => [
   { id: 'ayam',    name: 'Chicken (Ayam)',         icon: '🍗', color: '#f87171', prefix: 'AYM', dept: 'kitchen' },
   { id: 'daging',  name: 'Beef & Mutton',          icon: '🥩', color: '#fb7185', prefix: 'BEF', dept: 'kitchen' },
@@ -534,112 +558,88 @@ const DEFAULT_CATEGORIES = () => [
 
 const UNITS = ['pax', 'pcs', 'bottle', 'jug', 'tub', 'pack', 'tray', 'set'];
 
-// Hjh Maimunah 2026 V23 Master Menu with Recipe Component Explosion
 const SEED_MENU = () => [
-  // 🍗 CHICKEN (Ayam)
-  { sku: 'AYM-001', name: 'Ayam Goreng Khalasan (Boneless)', unit: 'pcs', station: 'ayam', aliases: ['ayam khalasan', 'khalasan', 'boneless fried chicken', 'ayam goreng'] },
-  { sku: 'AYM-002', name: 'Ayam Bakar Sunda', unit: 'pcs', station: 'ayam', aliases: ['ayam bakar', 'bakar sunda', 'bbq sunda', 'grilled chicken'] },
-  { sku: 'AYM-003', name: 'Ayam Kalio (Boneless)', unit: 'pcs', station: 'ayam', aliases: ['ayam kalio', 'kalio', 'chicken curry', 'gulai ayam'] },
-  { sku: 'AYM-004', name: 'Ayam Lemak Cili Padi', unit: 'pcs', station: 'ayam', aliases: ['ayam lemak', 'lemak cili padi', 'cili padi chicken'] },
-  { sku: 'AYM-005', name: 'Ayam Masak Merah', unit: 'pcs', station: 'ayam', aliases: ['masak merah', 'ayam merah', 'red chicken'] },
-  { sku: 'AYM-006', name: 'Ayam Goreng Bumbu', unit: 'pcs', station: 'ayam', aliases: ['ayam bumbu', 'ayam berempah', 'spiced fried chicken'] },
-  { sku: 'AYM-007', name: 'Fried Chicken Wing', unit: 'pcs', station: 'ayam', aliases: ['chicken wing', 'kepak ayam', 'kepak goreng'] },
+  { sku: 'AYM-001', name: 'Ayam Goreng Khalasan (Boneless)', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ayam khalasan', 'khalasan', 'boneless fried chicken', 'ayam goreng', 'fried chicken'] },
+  { sku: 'AYM-002', name: 'Ayam Bakar Sunda', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ayam bakar', 'bakar sunda', 'bbq sunda', 'grilled chicken'] },
+  { sku: 'AYM-003', name: 'Ayam Kalio (Boneless)', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ayam kalio', 'kalio', 'chicken curry', 'gulai ayam'] },
+  { sku: 'AYM-004', name: 'Ayam Lemak Cili Padi', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ayam lemak', 'lemak cili padi', 'cili padi chicken'] },
+  { sku: 'AYM-005', name: 'Ayam Masak Merah', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['masak merah', 'ayam merah', 'red chicken'] },
+  { sku: 'AYM-006', name: 'Ayam Goreng Bumbu', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ayam bumbu', 'ayam berempah', 'spiced fried chicken'] },
+  { sku: 'AYM-007', name: 'Fried Chicken Wing', station: 'ayam', unit: 'pcs', isDiscontinued: false, pricing: { price: 2.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken wing', 'kepak ayam', 'kepak goreng'] },
 
-  // 🥩 BEEF & MUTTON
-  { sku: 'BEF-001', name: 'Beef Rendang (Sapi)', unit: 'pax', station: 'daging', aliases: ['rendang', 'beef rendang', 'daging rendang', 'rendang sapi'] },
-  { sku: 'BEF-002', name: 'Sambal Goreng Pengantin', unit: 'pax', station: 'daging', aliases: ['sgp', 'pengantin', 'sambal pengantin', 'beef lungs and liver'] },
-  { sku: 'BEF-003', name: 'Paru Belado', unit: 'pax', station: 'daging', aliases: ['paru belado', 'paru', 'beef lungs belado', 'fried lung'] },
-  { sku: 'BEF-004', name: 'Lemak Babat', unit: 'pax', station: 'daging', aliases: ['lemak babat', 'babat', 'beef tripe curry'] },
-  { sku: 'BEF-005', name: 'Rawon Daging', unit: 'pax', station: 'daging', aliases: ['rawon', 'beef rawon', 'rawon soup'] },
-  { sku: 'BEF-006', name: 'Sop Bakso', unit: 'pax', station: 'daging', aliases: ['bakso', 'beefball soup', 'sup bakso'] },
-  { sku: 'BEF-007', name: 'Sop Ekor (Oxtail Soup)', unit: 'pax', station: 'daging', aliases: ['sop ekor', 'sup buntut', 'oxtail soup'] },
+  { sku: 'BEF-001', name: 'Beef Rendang (Sapi)', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 5.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['rendang', 'beef rendang', 'daging rendang', 'rendang sapi'] },
+  { sku: 'BEF-002', name: 'Sambal Goreng Pengantin', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 9.0, takeawayM: 11.0, dineInL: 11.0, takeawayL: 13.0 }, aliases: ['sgp', 'pengantin', 'sambal pengantin', 'beef lungs and liver'] },
+  { sku: 'BEF-003', name: 'Paru Belado', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 9.0, takeawayM: 11.0, dineInL: 11.0, takeawayL: 13.0 }, aliases: ['paru belado', 'paru', 'beef lungs belado', 'fried lung'] },
+  { sku: 'BEF-004', name: 'Lemak Babat', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 9.0, takeawayM: 11.0, dineInL: 11.0, takeawayL: 13.0 }, aliases: ['lemak babat', 'babat', 'beef tripe curry'] },
+  { sku: 'BEF-005', name: 'Rawon Daging', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 9.0, takeawayM: 11.0, dineInL: 11.0, takeawayL: 13.0 }, aliases: ['rawon', 'beef rawon', 'rawon soup'] },
+  { sku: 'BEF-006', name: 'Sop Bakso', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 7.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['bakso', 'beefball soup', 'sup bakso'] },
+  { sku: 'BEF-007', name: 'Sop Ekor (Oxtail Soup)', station: 'daging', unit: 'pax', isDiscontinued: false, pricing: { price: 8.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['sop ekor', 'sup buntut', 'oxtail soup'] },
 
-  // 🐟 FISH & SEAFOOD
-  { sku: 'SEA-001', name: 'Sweet & Sour Fish', unit: 'pax', station: 'seafood', aliases: ['sweet and sour fish', 'ikan masam manis', 'dory fish'] },
-  { sku: 'SEA-002', name: 'Ikan Goreng', unit: 'pcs', station: 'seafood', aliases: ['ikan goreng', 'fried fish'] },
-  { sku: 'SEA-003', name: 'Ikan Asam Pedas (Pari)', unit: 'pcs', station: 'seafood', aliases: ['asam pedas fish', 'ikan asam pedas', 'pari asam pedas'] },
-  { sku: 'SEA-004', name: 'Sambal Sotong Kembang', unit: 'pax', station: 'seafood', aliases: ['sambal sotong', 'sotong kembang', 'cuttlefish sambal'] },
-  { sku: 'SEA-005', name: 'Sambal Prawns (Udang)', unit: 'pax', station: 'seafood', aliases: ['sambal prawns', 'udang sambal', 'prawn sambal', 'sambal udang'] },
-  { sku: 'SEA-006', name: 'Sotong Hitam', unit: 'pax', station: 'seafood', aliases: ['sotong hitam', 'black squid', 'squid in ink'] },
-  { sku: 'SEA-007', name: 'Siakap Bakar', unit: 'pcs', station: 'seafood', aliases: ['siakap bakar', 'bbq seabass', 'ikan siakap'] },
+  { sku: 'SEA-001', name: 'Sweet & Sour Fish', station: 'seafood', unit: 'pax', isDiscontinued: false, pricing: { price: 3.5, dineInM: 7.0, takeawayM: 7.0, dineInL: 9.0, takeawayL: 9.0 }, aliases: ['sweet and sour fish', 'ikan masam manis', 'dory fish'] },
+  { sku: 'SEA-002', name: 'Ikan Goreng', station: 'seafood', unit: 'pcs', isDiscontinued: false, pricing: { price: 5.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['ikan goreng', 'fried fish'] },
+  { sku: 'SEA-003', name: 'Ikan Asam Pedas (Pari)', station: 'seafood', unit: 'pcs', isDiscontinued: false, pricing: { price: 5.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['asam pedas fish', 'ikan asam pedas', 'pari asam pedas'] },
+  { sku: 'SEA-004', name: 'Sambal Sotong Kembang', station: 'seafood', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 9.0, takeawayM: 11.0, dineInL: 11.0, takeawayL: 13.0 }, aliases: ['sambal sotong', 'sotong kembang', 'cuttlefish sambal'] },
+  { sku: 'SEA-005', name: 'Sambal Prawns (Udang)', station: 'seafood', unit: 'pax', isDiscontinued: false, pricing: { price: 4.0, dineInM: 8.0, takeawayM: null, dineInL: 12.0, takeawayL: 12.0 }, aliases: ['sambal prawns', 'udang sambal', 'prawn sambal', 'sambal udang'] },
+  { sku: 'SEA-006', name: 'Sotong Hitam', station: 'seafood', unit: 'pax', isDiscontinued: false, pricing: { price: 6.0, dineInM: 8.0, takeawayM: null, dineInL: 10.0, takeawayL: null }, aliases: ['sotong hitam', 'black squid', 'squid in ink'] },
+  { sku: 'SEA-007', name: 'Siakap Bakar', station: 'seafood', unit: 'pcs', isDiscontinued: false, pricing: { price: 28.0, dineInM: 28.0, takeawayM: 30.0, dineInL: null, takeawayL: null }, aliases: ['siakap bakar', 'bbq seabass', 'ikan siakap'] },
 
-  // 🥬 VEGETABLES
-  { sku: 'VEG-001', name: 'Sayur Lemak Lodeh', unit: 'pax', station: 'sayur', aliases: ['sayur lodeh', 'lodeh', 'sayur lontong'] },
-  { sku: 'VEG-002', name: 'Lemak Pucuk Ubi', unit: 'pax', station: 'sayur', aliases: ['pucuk ubi', 'daun ubi lemak', 'tapioca leaves'] },
-  { sku: 'VEG-003', name: 'Opor Nangka', unit: 'pax', station: 'sayur', aliases: ['opor nangka', 'lemak nangka', 'jackfruit curry'] },
-  { sku: 'VEG-004', name: 'Terung Sambal Belado', unit: 'pax', station: 'sayur', aliases: ['terung belado', 'brinjal belado', 'eggplant sambal', 'terong'] },
-  { sku: 'VEG-005', name: 'Vegetable Deluxe (Stir-Fried)', unit: 'pax', station: 'sayur', aliases: ['vegetable deluxe', 'stir fried vege', 'kailan', 'sayur campur'] },
-  { sku: 'VEG-006', name: 'Urap Sayur', unit: 'pax', station: 'sayur', aliases: ['urap', 'urap sayur', 'grated coconut salad'] },
+  { sku: 'VEG-001', name: 'Sayur Lemak Lodeh', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['sayur lodeh', 'lodeh', 'sayur lontong'] },
+  { sku: 'VEG-002', name: 'Lemak Pucuk Ubi', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['pucuk ubi', 'daun ubi lemak', 'tapioca leaves'] },
+  { sku: 'VEG-003', name: 'Opor Nangka', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['opor nangka', 'lemak nangka', 'jackfruit curry'] },
+  { sku: 'VEG-004', name: 'Terung Sambal Belado', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['terung belado', 'brinjal belado', 'eggplant sambal', 'terong'] },
+  { sku: 'VEG-005', name: 'Vegetable Deluxe (Stir-Fried)', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['vegetable deluxe', 'stir fried vege', 'kailan', 'sayur campur'] },
+  { sku: 'VEG-006', name: 'Urap Sayur', station: 'sayur', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 5.0, dineInL: 7.0, takeawayL: 7.0 }, aliases: ['urap', 'urap sayur', 'grated coconut salad'] },
 
-  // 🥔 SIDES (Lauk Sampingan)
-  { sku: 'SDE-001', name: 'Begedel', unit: 'pcs', station: 'sides', aliases: ['begedel', 'bergedil', 'potato cutlet', 'perkedel'] },
-  { sku: 'SDE-002', name: 'Sambal Goreng Jawa (SGJ)', unit: 'pax', station: 'sides', aliases: ['sgj', 'sambal goreng jawa', 'sambal goreng', 'tempe tahu'] },
-  { sku: 'SDE-003', name: 'Tempe Madu', unit: 'pax', station: 'sides', aliases: ['tempe madu', 'honey tempe', 'crispy tempeh'] },
-  { sku: 'SDE-004', name: 'Ikan Bilis Kacang', unit: 'pax', station: 'sides', aliases: ['ikan bilis kacang', 'bilis kacang', 'anchovies peanut'] },
-  { sku: 'SDE-005', name: 'Kentang Belado', unit: 'pax', station: 'sides', aliases: ['kentang belado', 'potato belado'] },
-  { sku: 'SDE-006', name: 'Telur Sambal Belado', unit: 'pcs', station: 'sides', aliases: ['telur belado', 'telor sambal', 'egg sambal', 'sambal egg'] },
-  { sku: 'SDE-007', name: 'Tahu Telur Jakarta', unit: 'pcs', station: 'sides', aliases: ['tahu telur', 'tahu telor', 'jakarta tofu'] },
+  { sku: 'SDE-001', name: 'Begedel', station: 'sides', unit: 'pcs', isDiscontinued: false, pricing: { price: 1.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['begedel', 'bergedil', 'potato cutlet', 'perkedel'] },
+  { sku: 'SDE-002', name: 'Sambal Goreng Jawa (SGJ)', station: 'sides', unit: 'pax', isDiscontinued: false, pricing: { price: 2.0, dineInM: 6.0, takeawayM: 7.0, dineInL: 8.0, takeawayL: 9.0 }, aliases: ['sgj', 'sambal goreng jawa', 'sambal goreng', 'tempe tahu'] },
+  { sku: 'SDE-003', name: 'Tempe Madu', station: 'sides', unit: 'pax', isDiscontinued: false, pricing: { price: 2.0, dineInM: 6.0, takeawayM: 7.0, dineInL: null, takeawayL: null }, aliases: ['tempe madu', 'honey tempe', 'crispy tempeh'] },
+  { sku: 'SDE-004', name: 'Ikan Bilis Kacang', station: 'sides', unit: 'pax', isDiscontinued: false, pricing: { price: 2.0, dineInM: 6.0, takeawayM: 7.0, dineInL: null, takeawayL: null }, aliases: ['ikan bilis kacang', 'bilis kacang', 'anchovies peanut'] },
+  { sku: 'SDE-005', name: 'Kentang Belado', station: 'sides', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: 5.0, takeawayM: 6.0, dineInL: 7.0, takeawayL: 8.0 }, aliases: ['kentang belado', 'potato belado'] },
+  { sku: 'SDE-006', name: 'Telur Sambal Belado', station: 'sides', unit: 'pcs', isDiscontinued: false, pricing: { price: 1.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['telur belado', 'telor sambal', 'egg sambal', 'sambal egg'] },
+  { sku: 'SDE-007', name: 'Tahu Telur Jakarta', station: 'sides', unit: 'pcs', isDiscontinued: false, pricing: { price: 8.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['tahu telur', 'tahu telor', 'jakarta tofu'] },
 
-  // 🍚 RICE & NOODLES
-  { sku: 'STP-001', name: 'Steamed White Rice', unit: 'pax', station: 'rice', aliases: ['white rice', 'nasi putih', 'steamed rice', 'nasi'] },
-  { sku: 'STP-002', name: 'Mee Goreng Seafood', unit: 'pax', station: 'rice', aliases: ['mee goreng', 'fried mee', 'mee goreng seafood'] },
-  { sku: 'STP-003', name: 'Bee Hoon Goreng', unit: 'pax', station: 'rice', aliases: ['bee hoon goreng', 'fried bee hoon', 'bihun goreng'] },
-  { sku: 'STP-004', name: 'Nasi Goreng Kampung', unit: 'pax', station: 'rice', aliases: ['nasi goreng kampung', 'kampung fried rice'] },
-  { sku: 'STP-005', name: 'Lontong Sayur', unit: 'pax', station: 'rice', aliases: ['lontong', 'lontong lodeh'] },
+  { sku: 'STP-001', name: 'Steamed White Rice', station: 'rice', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['white rice', 'nasi putih', 'steamed rice', 'nasi'] },
+  { sku: 'STP-002', name: 'Mee Goreng Seafood', station: 'rice', unit: 'pax', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['mee goreng', 'fried mee', 'mee goreng seafood'] },
+  { sku: 'STP-003', name: 'Bee Hoon Goreng', station: 'rice', unit: 'pax', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['bee hoon goreng', 'fried bee hoon', 'bihun goreng'] },
+  { sku: 'STP-004', name: 'Nasi Goreng Kampung', station: 'rice', unit: 'pax', isDiscontinued: false, pricing: { price: 6.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['nasi goreng kampung', 'kampung fried rice'] },
+  { sku: 'STP-005', name: 'Lontong Sayur', station: 'rice', unit: 'pax', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['lontong', 'lontong lodeh'] },
 
-  // 🍱 CATERING SETS & BENTOS (Exploded into kitchen stations)
-  { sku: 'CAT-001', name: 'Chicken Set A [LB/BB]', unit: 'pax', station: 'sets', aliases: ['chicken set a', 'set a chicken'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-002', name: 'Chicken Set B [LB/BB]', unit: 'pax', station: 'sets', aliases: ['chicken set b', 'set b chicken'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-003', qty: 1 }, { sku: 'VEG-004', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-003', name: 'Chicken Set C [LB/BB]', unit: 'pax', station: 'sets', aliases: ['chicken set c', 'set c chicken'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-004', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-004', name: 'Beef Set [LB/BB]', unit: 'pax', station: 'sets', aliases: ['beef set', 'beef rendang set'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-005', name: 'Fish Set A [LB/BB]', unit: 'pax', station: 'sets', aliases: ['fish set a', 'fried fish set'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'SEA-002', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-006', name: 'Nasi Sambal Goreng Set [LB/BB]', unit: 'pax', station: 'sets', aliases: ['nasi sambal goreng set', 'nsgs'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SEA-004', qty: 1 }, { sku: 'BEF-003', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 } ] },
-  { sku: 'CAT-007', name: 'Vegetarian Set [LB/BB]', unit: 'pax', station: 'sets', aliases: ['vegetarian set', 'vege set'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'VEG-003', qty: 1 }, { sku: 'VEG-004', qty: 1 }, { sku: 'VEG-006', qty: 1 } ] },
-  { sku: 'CAT-008', name: 'Chicken & Beef Set [LB/BB]', unit: 'pax', station: 'sets', aliases: ['chicken and beef set'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-005', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
-  { sku: 'CAT-009', name: 'Tea Time Set [LB/BB]', unit: 'pax', station: 'sets', aliases: ['tea time set', 'high tea bento'],
-    recipe: [ { sku: 'KUH-001', qty: 2 }, { sku: 'KUH-007', qty: 3 } ] },
+  { sku: 'CAT-001', name: 'Chicken Set A [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 10.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken set a', 'set a chicken'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-002', name: 'Chicken Set B [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 10.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken set b', 'set b chicken'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-003', qty: 1 }, { sku: 'VEG-004', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-003', name: 'Chicken Set C [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 10.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken set c', 'set c chicken'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-004', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-004', name: 'Beef Set [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 10.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['beef set', 'beef rendang set'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-005', name: 'Fish Set A [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 10.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['fish set a', 'fried fish set'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'SEA-002', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-006', name: 'Nasi Sambal Goreng Set [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 11.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['nasi sambal goreng set', 'nsgs'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SEA-004', qty: 1 }, { sku: 'BEF-003', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 } ] },
+  { sku: 'CAT-007', name: 'Vegetarian Set [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 8.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['vegetarian set', 'vege set'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'VEG-003', qty: 1 }, { sku: 'VEG-004', qty: 1 }, { sku: 'VEG-006', qty: 1 } ] },
+  { sku: 'CAT-008', name: 'Chicken & Beef Set [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 14.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken and beef set'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-005', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 } ] },
+  { sku: 'CAT-009', name: 'Tea Time Set [LB/BB]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 9.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['tea time set', 'high tea bento'], recipe: [ { sku: 'KUH-001', qty: 2 }, { sku: 'KUH-007', qty: 3 } ] },
 
-  // 🥘 MINI BUFFET & BUFFET SET UP (MBC / BSU)
-  { sku: 'CAT-020', name: 'Chicken & Seafood Buffet [MBC/BSU]', unit: 'pax', station: 'sets', aliases: ['chicken and seafood buffet', 'mini buffet chicken seafood'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-003', qty: 1 }, { sku: 'SEA-005', qty: 1 }, { sku: 'VEG-005', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-001', qty: 2 } ] },
-  { sku: 'CAT-021', name: 'Chicken & Beef Buffet [MBC/BSU]', unit: 'pax', station: 'sets', aliases: ['chicken and beef buffet', 'mini buffet chicken beef'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-006', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'VEG-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-001', qty: 2 } ] },
-  { sku: 'CAT-022', name: 'Chicken, Beef & Seafood Buffet [MBC/BSU]', unit: 'pax', station: 'sets', aliases: ['chicken beef seafood buffet'],
-    recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-006', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SEA-005', qty: 1 }, { sku: 'VEG-001', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-004', qty: 1 } ] },
+  { sku: 'CAT-020', name: 'Chicken & Seafood Buffet [MBC/BSU]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 18.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken and seafood buffet', 'mini buffet chicken seafood'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-003', qty: 1 }, { sku: 'SEA-005', qty: 1 }, { sku: 'VEG-005', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-001', qty: 2 } ] },
+  { sku: 'CAT-021', name: 'Chicken & Beef Buffet [MBC/BSU]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 20.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken and beef buffet', 'mini buffet chicken beef'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-006', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'VEG-001', qty: 1 }, { sku: 'SDE-002', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-001', qty: 2 } ] },
+  { sku: 'CAT-022', name: 'Chicken, Beef & Seafood Buffet [MBC/BSU]', station: 'sets', unit: 'pax', isDiscontinued: false, pricing: { price: 22.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['chicken beef seafood buffet'], recipe: [ { sku: 'STP-001', qty: 1 }, { sku: 'AYM-006', qty: 1 }, { sku: 'BEF-001', qty: 1 }, { sku: 'SEA-005', qty: 1 }, { sku: 'VEG-001', qty: 1 }, { sku: 'SDE-001', qty: 1 }, { sku: 'JAR-004', qty: 1 }, { sku: 'JAR-001', qty: 1 }, { sku: 'KUH-004', qty: 1 } ] },
 
-  // 🍮 KUIH & DESSERTS (Dessert Station)
-  { sku: 'KUH-001', name: 'Assorted Traditional Malay Kuih', unit: 'pcs', station: 'kuih', aliases: ['kuih muih', 'assorted kuih', 'malay kuih', 'kueh'] },
-  { sku: 'KUH-002', name: 'Kuih Dadar', unit: 'pcs', station: 'kuih', aliases: ['kuih dadar', 'dadar', 'coconut pancake'] },
-  { sku: 'KUH-003', name: 'Kuih Lopes', unit: 'pcs', station: 'kuih', aliases: ['kuih lopes', 'lopes', 'glutinous rice lopes'] },
-  { sku: 'KUH-004', name: 'Bubur Pengat Pisang', unit: 'tub', station: 'kuih', aliases: ['pengat pisang', 'bubur pisang', 'banana dessert'] },
-  { sku: 'KUH-005', name: 'Bubur Pulut Hitam', unit: 'tub', station: 'kuih', aliases: ['pulut hitam', 'black glutinous rice'] },
-  { sku: 'KUH-006', name: 'Agar-Agar Gudil (Gula Melaka)', unit: 'pax', station: 'kuih', aliases: ['agar agar gudil', 'gudil original'] },
-  { sku: 'KUH-007', name: 'Mini Samosa & Popiah', unit: 'pcs', station: 'kuih', aliases: ['mini samosa', 'samosa', 'popiah', 'curry samosa'] },
+  { sku: 'KUH-001', name: 'Assorted Traditional Malay Kuih', station: 'kuih', unit: 'pcs', isDiscontinued: false, pricing: { price: 1.4, dineInM: 5.1, takeawayM: 5.1, dineInL: 8.5, takeawayL: 8.5 }, aliases: ['kuih muih', 'assorted kuih', 'malay kuih', 'kueh'] },
+  { sku: 'KUH-002', name: 'Kuih Dadar', station: 'kuih', unit: 'pcs', isDiscontinued: false, pricing: { price: 1.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['kuih dadar', 'dadar', 'coconut pancake'] },
+  { sku: 'KUH-003', name: 'Kuih Lopes', station: 'kuih', unit: 'pcs', isDiscontinued: false, pricing: { price: 1.8, dineInM: null, takeawayM: null, dineInL: 8.0, takeawayL: 8.0 }, aliases: ['kuih lopes', 'lopes', 'glutinous rice lopes'] },
+  { sku: 'KUH-004', name: 'Bubur Pengat Pisang', station: 'kuih', unit: 'tub', isDiscontinued: false, pricing: { price: 4.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['pengat pisang', 'bubur pisang', 'banana dessert'] },
+  { sku: 'KUH-005', name: 'Bubur Pulut Hitam', station: 'kuih', unit: 'tub', isDiscontinued: false, pricing: { price: 4.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['pulut hitam', 'black glutinous rice'] },
+  { sku: 'KUH-006', name: 'Agar-Agar Gudil (Gula Melaka)', station: 'kuih', unit: 'pax', isDiscontinued: false, pricing: { price: 1.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['agar agar gudil', 'gudil original'] },
+  { sku: 'KUH-007', name: 'Mini Samosa & Popiah', station: 'kuih', unit: 'pcs', isDiscontinued: false, pricing: { price: 0.7, dineInM: null, takeawayM: null, dineInL: 30.0, takeawayL: 30.0 }, aliases: ['mini samosa', 'samosa', 'popiah', 'curry samosa'] },
 
-  // 🍹 DRINKS & DISPENSERS (Drinks Bar)
-  { sku: 'DRK-001', name: 'Teh Tarik Dispenser (5L · 20-25 Pax)', unit: 'jug', station: 'drinks', aliases: ['teh tarik dispenser 5L', 'teh tarik 5l', '5L teh tarik', 'dispenser teh 5L'] },
-  { sku: 'DRK-002', name: 'Kopi Tarik Dispenser (5L · 20-25 Pax)', unit: 'jug', station: 'drinks', aliases: ['kopi tarik dispenser 5L', 'kopi tarik 5l', '5L kopi tarik'] },
-  { sku: 'DRK-003', name: 'Teh Tarik Dispenser (3L · 12-15 Pax)', unit: 'jug', station: 'drinks', aliases: ['teh tarik dispenser 3L', 'teh tarik 3l', '3L teh tarik'] },
-  { sku: 'DRK-004', name: 'Blueberry Longan Bottle', unit: 'bottle', station: 'drinks', aliases: ['blueberry longan', 'bb longan bottle', 'blueberry longan bottle'] },
-  { sku: 'DRK-005', name: 'Bandung Selasih Bottle', unit: 'bottle', station: 'drinks', aliases: ['bandung selasih', 'bandung bottle', 'sirap bandung'] },
-  { sku: 'DRK-006', name: 'Sirap Selasih Bottle', unit: 'bottle', station: 'drinks', aliases: ['sirap selasih', 'selasih bottle'] },
-  { sku: 'DRK-007', name: 'Lime Cordial Bottle', unit: 'bottle', station: 'drinks', aliases: ['lime cordial', 'air limau bottle'] },
+  { sku: 'DRK-001', name: 'Teh Tarik Dispenser (5L · 20-25 Pax)', station: 'drinks', unit: 'jug', isDiscontinued: false, pricing: { price: 45.0, dineInM: null, takeawayM: null, dineInL: 55.0, takeawayL: 55.0 }, aliases: ['teh tarik dispenser 5L', 'teh tarik 5l', '5L teh tarik', 'dispenser teh 5L'] },
+  { sku: 'DRK-002', name: 'Kopi Tarik Dispenser (5L · 20-25 Pax)', station: 'drinks', unit: 'jug', isDiscontinued: false, pricing: { price: 45.0, dineInM: null, takeawayM: null, dineInL: 55.0, takeawayL: 55.0 }, aliases: ['kopi tarik dispenser 5L', 'kopi tarik 5l', '5L kopi tarik'] },
+  { sku: 'DRK-003', name: 'Teh Tarik Dispenser (3L · 12-15 Pax)', station: 'drinks', unit: 'jug', isDiscontinued: false, pricing: { price: 30.0, dineInM: null, takeawayM: null, dineInL: 38.0, takeawayL: 38.0 }, aliases: ['teh tarik dispenser 3L', 'teh tarik 3l', '3L teh tarik'] },
+  { sku: 'DRK-004', name: 'Blueberry Longan Bottle', station: 'drinks', unit: 'bottle', isDiscontinued: false, pricing: { price: 3.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['blueberry longan', 'bb longan bottle', 'blueberry longan bottle'] },
+  { sku: 'DRK-005', name: 'Bandung Selasih Bottle', station: 'drinks', unit: 'bottle', isDiscontinued: false, pricing: { price: 3.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['bandung selasih', 'bandung bottle', 'sirap bandung'] },
+  { sku: 'DRK-006', name: 'Sirap Selasih Bottle', station: 'drinks', unit: 'bottle', isDiscontinued: false, pricing: { price: 2.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['sirap selasih', 'selasih bottle'] },
+  { sku: 'DRK-007', name: 'Lime Cordial Bottle', station: 'drinks', unit: 'bottle', isDiscontinued: false, pricing: { price: 2.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['lime cordial', 'air limau bottle'] },
 
-  // 🌶️ SAMBAL JARS & PASTES
-  { sku: 'JAR-001', name: 'Sambal Belacan Jar', unit: 'tub', station: 'sambal', aliases: ['sambal belacan jar', 'belacan jar', 'sambal belacan'] },
-  { sku: 'JAR-002', name: 'Sambal Belado Jar', unit: 'tub', station: 'sambal', aliases: ['sambal belado jar', 'belado jar'] },
-  { sku: 'JAR-003', name: 'Sambal Kicap Jar', unit: 'tub', station: 'sambal', aliases: ['sambal kicap jar', 'kicap jar'] },
-  { sku: 'JAR-004', name: 'Serunding 200g Tub', unit: 'tub', station: 'sambal', aliases: ['serunding', 'serunding tub', 'spiced coconut'] },
-  { sku: 'JAR-005', name: 'RTE Beef Rendang (1kg)', unit: 'pack', station: 'sambal', aliases: ['rte beef rendang', 'frozen rendang 1kg', 'rendang 1kg'] },
-].map(d => ({ id: uid(), ...d, recipe: d.recipe || [] }));
+  { sku: 'JAR-001', name: 'Sambal Belacan Jar', station: 'sambal', unit: 'tub', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['sambal belacan jar', 'belacan jar', 'sambal belacan'] },
+  { sku: 'JAR-002', name: 'Sambal Belado Jar', station: 'sambal', unit: 'tub', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['sambal belado jar', 'belado jar'] },
+  { sku: 'JAR-003', name: 'Sambal Kicap Jar', station: 'sambal', unit: 'tub', isDiscontinued: false, pricing: { price: 5.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['sambal kicap jar', 'kicap jar'] },
+  { sku: 'JAR-004', name: 'Serunding 200g Tub', station: 'sambal', unit: 'tub', isDiscontinued: false, pricing: { price: 7.0, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }, aliases: ['serunding', 'serunding tub', 'spiced coconut'] },
+  { sku: 'JAR-005', name: 'RTE Beef Rendang (1kg)', station: 'sambal', unit: 'pack', isDiscontinued: false, pricing: { price: 35.0, dineInM: null, takeawayM: null, dineInL: 40.0, takeawayL: 40.0 }, aliases: ['rte beef rendang', 'frozen rendang 1kg', 'rendang 1kg'] }
+].map(d => ({ id: uid(), ...d, recipe: d.recipe || [], isDiscontinued: !!d.isDiscontinued }));
 
 /* ============================== Data Store Accessors & Helpers ============================== */
 function dishById(id) { return S && S.menu ? S.menu.find(m => m.id === id) : null; }
@@ -659,36 +659,37 @@ function paxOf(items) {
 function demoOrders() {
   const by = sku => (S && S.menu ? S.menu.find(m => m.sku === sku)?.id : null) || SEED_MENU().find(m => m.sku === sku)?.id;
   const t = Date.now();
-  const mk = (customer, orderId, format, deliveryTime, source, items, i) => {
+  const mk = (customer, mobile, orderId, format, deliveryTime, source, items, i) => {
     const its = items.map(([s, q]) => ({ dishId: by(s), qty: q })).filter(x => x.dishId);
     return {
-      id: uid(), customer, orderId, format, deliveryTime,
+      id: uid(), customer, mobile, orderId, format, deliveryTime,
       slot: calcPrepTime(deliveryTime, format),
-      source, items: its, pax: paxOf(its), createdAt: t + i, done: false
+      source, items: its, pax: paxOf(its), createdAt: t + i, done: false,
+      clearedAt: null
     };
   };
   return [
-    mk('Maybank Tower (Corporate Lunch)', '#LB-9011', 'LB', '11:30', 'Word', [
+    mk('Maybank Tower (Corporate Lunch)', '+65 9123 4567', '#LB-9011', 'LB', '11:30', 'Word', [
       ['CAT-001', 50],
       ['DRK-004', 50],
     ], 1),
-    mk('Shopee SG (Regional Townhall)', '#MBC-4082', 'MBC', '12:00', 'Word', [
+    mk('Shopee SG (Regional Townhall)', '+65 9876 5432', '#MBC-4082', 'MBC', '12:00', 'Word', [
       ['CAT-021', 35],
       ['DRK-001', 1],
       ['SDE-001', 35],
     ], 2),
-    mk('Temasek Holdings (VIP Board Meeting)', '#BB-7720', 'BB', '12:30', 'Photo', [
+    mk('Temasek Holdings (VIP Board Meeting)', '+65 8234 5678', '#BB-7720', 'BB', '12:30', 'Photo', [
       ['CAT-008', 20],
       ['DRK-005', 20],
       ['KUH-006', 20],
     ], 3),
-    mk('Sarah & Danial Wedding Reception', '#BSU-3390', 'BSU', '18:30', 'PDF', [
+    mk('Sarah & Danial Wedding Reception', '+65 9345 6789', '#BSU-3390', 'BSU', '18:30', 'PDF', [
       ['CAT-022', 80],
       ['DRK-001', 3],
       ['DRK-002', 2],
       ['KUH-001', 80],
     ], 4),
-    mk('GovTech High Tea Reception', '#LB-6122', 'LB', '15:00', 'Manual', [
+    mk('GovTech High Tea Reception', '+65 8456 7890', '#LB-6122', 'LB', '15:00', 'Manual', [
       ['CAT-009', 40],
       ['DRK-003', 2],
     ], 5),
@@ -696,9 +697,11 @@ function demoOrders() {
 }
 
 const DEFAULT_STATE = () => ({
-  v: 4,
+  v: 5,
   categories: DEFAULT_CATEGORIES(),
   menu: SEED_MENU(),
+  buffers: { BSU: 120, MBC: 90, LB: 90, BB: 90, AC: 45 },
+  ingestion: { minConfidence: 75, fallbackQueue: true },
   slots: [
     { time: '10:00', deliveryTime: '11:30', label: 'Lunch Batch 1' },
     { time: '11:00', deliveryTime: '12:30', label: 'Lunch Batch 2' },
@@ -711,10 +714,14 @@ const DEFAULT_STATE = () => ({
     footer: 'Taste-check sambal before dispatch.\nLabel & date every tub (FIFO).',
     showCustomer: true, showOrderId: true, showDispatch: true, showPax: true, groupStations: true, showBreakdown: true,
   },
-  orders: [], prepDone: {}, seq: 1100, learn: true,
+  orders: [],
+  history: [], // Completed & cleared order archive
+  prepDone: {},
+  seq: 1100,
+  learn: true,
 });
 
-const KEY = 'kitchsync-hjh-v4';
+const KEY = 'kitchsync-hjh-v5';
 let S;
 function initStore() {
   try {
@@ -723,6 +730,9 @@ function initStore() {
       const parsed = JSON.parse(loaded);
       if (parsed && Array.isArray(parsed.menu) && parsed.menu.length) {
         if (!Array.isArray(parsed.orders) || !parsed.orders.length) parsed.orders = demoOrders();
+        if (!Array.isArray(parsed.history)) parsed.history = [];
+        if (!parsed.buffers) parsed.buffers = { BSU: 120, MBC: 90, LB: 90, BB: 90, AC: 45 };
+        if (!parsed.ingestion) parsed.ingestion = { minConfidence: 75, fallbackQueue: true };
         return parsed;
       }
     }
@@ -739,7 +749,8 @@ let saveT; function save() { clearTimeout(saveT); saveT = setTimeout(() => { try
 
 const UI = {
   pane: 'prep', slot: 'all', prepDept: 'all', prepFmt: 'all', prepMode: 'cook',
-  tab: 'menu', mq: '', mst: 'all', tplPreview: 'prep', spane: 'lines', printDept: 'all'
+  tab: 'menu', mq: '', mst: 'all', selectedMenu: new Set(),
+  tplPreview: 'prep', spane: 'lines', printDept: 'all'
 };
 
 function stStyle(k) {
@@ -773,12 +784,11 @@ function allSlots(orders = S.orders) {
 
 function setPrepMode(mode) {
   UI.prepMode = mode;
-  $('#mode-btn-cook').classList.toggle('on', mode === 'cook');
-  $('#mode-btn-pack').classList.toggle('on', mode === 'pack');
+  $('#mode-btn-cook')?.classList.toggle('on', mode === 'cook');
+  $('#mode-btn-pack')?.classList.toggle('on', mode === 'pack');
   renderPrep();
 }
 
-/* live counts by department and format */
 function deptItemCounts(slot = 'all', fmt = 'all') {
   let all = 0, kitchen = 0, drinks = 0, dessert = 0;
   S.orders.filter(o => !o.done && (slot === 'all' || o.slot === slot) && (fmt === 'all' || o.format === fmt)).forEach(o => o.items.forEach(it => {
@@ -813,8 +823,9 @@ function buildBatches(slotFilter = 'all', deptFilter = 'all', fmtFilter = 'all',
         const d = dishById(it.dishId);
         if (!d || !(it.qty > 0)) return;
 
-        // In 'cook' mode, explode sets with recipes into station ingredients
-        if (mode === 'cook' && d.recipe && d.recipe.length > 0) {
+        // Rule: Price matrices and package splitting logic remain disabled for catering formats (BSU, MBC, LB, BB)
+        const isCatering = FORMATS[o.format]?.isCatering;
+        if (!isCatering && mode === 'cook' && d.recipe && d.recipe.length > 0) {
           d.recipe.forEach(rc => {
             const compDish = dishBySku(rc.sku);
             if (!compDish) return;
@@ -825,7 +836,6 @@ function buildBatches(slotFilter = 'all', deptFilter = 'all', fmtFilter = 'all',
             map[compDish.id].alloc.push({ order: o, qty: compQty, fromSet: d.name, format: o.format });
           });
         } else {
-          // 'pack' mode or plain item
           if (!keys.includes(d.station)) return;
           (map[d.id] ||= { dish: d, total: 0, alloc: [] });
           map[d.id].total += +it.qty;
@@ -857,12 +867,13 @@ function setMobilePane(p) {
   else if (p === 'settings') { renderSettings(); }
   syncBnav();
 }
+
 function syncBnav() {
   $$('#bnav button[data-b]').forEach(b => b.classList.toggle('on', b.dataset.b === UI.pane));
   const cnt = $('#bnav-cnt'); if (cnt) cnt.textContent = S.orders.filter(o => !o.done).length;
 }
 
-/* ============================== Fuzzy Matcher ============================== */
+/* ============================== Fuzzy Matcher with Configurable Threshold ============================== */
 function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
 function lev(a, b) {
   if (a === b) return 0; if (!a.length) return b.length; if (!b.length) return a.length;
@@ -882,25 +893,31 @@ function candScore(t, c) {
   if (c.length >= 4 && (' ' + t + ' ').includes(' ' + c + ' ') && t !== c) s = Math.max(s, Math.min(.94, .72 + .22 * (c.length / t.length)));
   return s;
 }
+
 function matchText(text) {
   const t = norm(text); let best = { dish: null, score: 0, via: '' };
   if (!t) return best;
-  for (const d of S.menu) {
+  const activeMenu = S.menu.filter(m => !m.isDiscontinued);
+  for (const d of activeMenu) {
     const cands = [d.name, d.name.replace(/\[.*?\]|\(.*?\)/g, ''), d.sku, ...(d.aliases || [])];
     for (const c of cands) { const sc = candScore(t, norm(c)); if (sc > best.score) best = { dish: d, score: sc, via: c }; }
   }
   return best;
 }
+
 function parseLine(raw) {
   const s = String(raw || ''); const m = s.match(/\d{1,4}/);
   const qty = m ? +m[0] : 1;
   const text = s.replace(/\d{1,4}/, ' ').replace(/\b(x|pax|pcs|pc|org|orang|porsi|bks|qty|nos|tubs?|ltr|jugs?|cups?|pack|set)\b/gi, ' ').replace(/[-–:=*•#@,.()\[\]]/g, ' ').replace(/\s+/g, ' ').trim();
   return { qty, text };
 }
+
 function analyze(raw) {
-  const { qty, text } = parseLine(raw); const m = matchText(text);
+  const { qty, text } = parseLine(raw);
+  const m = matchText(text);
   const score = Math.round(m.score * 100) / 100;
-  const level = score >= .95 ? 'exact' : score >= .6 ? 'fuzzy' : 'unmapped';
+  const minThreshold = (S.ingestion?.minConfidence || 75) / 100;
+  const level = score >= .95 ? 'exact' : score >= minThreshold ? 'fuzzy' : 'unmapped';
   return { qty, text, suggestId: m.dish?.id || '', score, level, dishId: level === 'unmapped' ? '' : m.dish.id, include: level !== 'unmapped' };
 }
 
@@ -913,7 +930,7 @@ async function extractWordText(file) {
     const u8 = new Uint8Array(buf);
     return await parseDocxContent(u8);
   } catch (err) {
-    return `[Word Document: ${file.name}]\n50x Chicken Set A [LB]\n50x Blueberry Longan Bottle\n30x Begedel`;
+    return `[Word Document: ${file.name}]\nCustomer: Shopee SG Townhall\nMobile: +65 9876 5432\nPax: 35\nFormat: [MBC] Mini Buffet\nDelivery: 12:00 PM\n35x Chicken & Beef Buffet [MBC]\n1x Teh Tarik Dispenser (5L)\n35x Begedel`;
   }
 }
 
@@ -957,6 +974,48 @@ async function parseDocxContent(u8) {
   return xmlStr.replace(/<w:p[^>]*>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\n\s*\n/g, '\n').trim();
 }
 
+function extractMetadataFromText(rawText, filename = '') {
+  let customer = '';
+  let mobile = '';
+  let pax = 10;
+  let format = 'LB';
+  let deliveryTime = '12:00';
+
+  const mobMatch = rawText.match(/(?:\+?65\s?)?([89]\d{3}[-\s]?\d{4})\b/) || rawText.match(/\b([689]\d{7})\b/);
+  if (mobMatch) mobile = mobMatch[0].trim();
+
+  const custMatch = rawText.match(/(?:Customer|Client|Contact|Event|Company|Name)\s*[:=-]\s*([^\n\r,]+)/i);
+  if (custMatch) {
+    customer = custMatch[1].trim();
+  } else if (filename) {
+    customer = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').replace(/\b(docx?|pdf|jpg|png|webp)\b/gi, '').trim();
+  }
+
+  const paxMatch = rawText.match(/(?:Pax|Guests|Headcount|Qty)\s*[:=-]?\s*(\d{1,4})/i) || rawText.match(/\b(\d{1,4})\s*(?:pax|people|guests|org|orang)\b/i);
+  if (paxMatch) pax = parseInt(paxMatch[1], 10);
+
+  if (/\[?BSU\]?|buffet\s*set\s*up/i.test(rawText + filename)) format = 'BSU';
+  else if (/\[?MBC\]?|mini\s*buffet/i.test(rawText + filename)) format = 'MBC';
+  else if (/\[?BB\]?|bento\s*box|bento/i.test(rawText + filename)) format = 'BB';
+  else if (/\[?AC\]?|ala\s*carte|retail/i.test(rawText + filename)) format = 'AC';
+  else if (/\[?LB\]?|lunchbox|lunch\s*box/i.test(rawText + filename)) format = 'LB';
+
+  const timeMatch = rawText.match(/(?:Delivery|Dropoff|Time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:am|pm)?)/i);
+  if (timeMatch) {
+    const rawT = timeMatch[1].toLowerCase().trim();
+    if (rawT.includes('pm') || rawT.includes('am')) {
+      const isPm = rawT.includes('pm');
+      const [h, m] = rawT.replace(/[^\d:]/g, '').split(':').map(Number);
+      let hh = isPm ? (h < 12 ? h + 12 : h) : (h === 12 ? 0 : h);
+      deliveryTime = `${String(hh).padStart(2, '0')}:${String(m || 0).padStart(2, '0')}`;
+    } else {
+      deliveryTime = rawT;
+    }
+  }
+
+  return { customer, mobile, pax, format, deliveryTime };
+}
+
 /* ============================== Views & Renders ============================== */
 function renderTop() {
   const active = S.orders.filter(o => !o.done);
@@ -980,22 +1039,22 @@ function renderPrep() {
     <button class="dept-chip dept-dsrt ${UI.prepDept === 'dessert' ? 'on' : ''}" onclick="UI.prepDept='dessert';renderPrep()">🍮 Dessert <span class="n">${counts.dessert}</span></button>
   `;
 
-  // Render format filter bar (MBC, LB, BSU, BB)
   const fmtCounts = { all: S.orders.filter(o => !o.done && (UI.slot === 'all' || o.slot === UI.slot)).length };
   Object.keys(FORMATS).forEach(k => {
     fmtCounts[k] = S.orders.filter(o => !o.done && o.format === k && (UI.slot === 'all' || o.slot === UI.slot)).length;
   });
   $('#fmt-bar').innerHTML = `
     <button class="fmt-chip ${UI.prepFmt === 'all' ? 'on' : ''}" onclick="UI.prepFmt='all';renderPrep()">🏷️ All <span class="n">${fmtCounts.all}</span></button>
+    <button class="fmt-chip ${UI.prepFmt === 'BSU' ? 'on' : ''}" onclick="UI.prepFmt='BSU';renderPrep()">🍛 BSU <span class="n">${fmtCounts.BSU || 0}</span></button>
     <button class="fmt-chip ${UI.prepFmt === 'MBC' ? 'on' : ''}" onclick="UI.prepFmt='MBC';renderPrep()">🥘 MBC <span class="n">${fmtCounts.MBC || 0}</span></button>
     <button class="fmt-chip ${UI.prepFmt === 'LB' ? 'on' : ''}" onclick="UI.prepFmt='LB';renderPrep()">🍱 LB <span class="n">${fmtCounts.LB || 0}</span></button>
-    <button class="fmt-chip ${UI.prepFmt === 'BSU' ? 'on' : ''}" onclick="UI.prepFmt='BSU';renderPrep()">🍛 BSU <span class="n">${fmtCounts.BSU || 0}</span></button>
     <button class="fmt-chip ${UI.prepFmt === 'BB' ? 'on' : ''}" onclick="UI.prepFmt='BB';renderPrep()">🍱 BB <span class="n">${fmtCounts.BB || 0}</span></button>
+    <button class="fmt-chip ${UI.prepFmt === 'AC' ? 'on' : ''}" onclick="UI.prepFmt='AC';renderPrep()">🛍️ AC <span class="n">${fmtCounts.AC || 0}</span></button>
   `;
 
   const batches = buildBatches(UI.slot, UI.prepDept, UI.prepFmt, UI.prepMode);
   if (!batches.length) {
-    $('#prep').innerHTML = `<div class="empty"><div class="big">🍛</div><h3>No prep queued</h3><div>No items matching the selected filters.</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn sm" onclick="UI.prepDept='all';UI.prepFmt='all';renderPrep()">Reset Filters</button>${S.orders.length ? '' : '<button class="btn sm pri" onclick="loadDemo()">Load Demo Orders</button>'}</div></div>`;
+    $('#prep').innerHTML = `<div class="empty"><div class="big">🍛</div><h3>No prep queued</h3><div>No active items matching the selected filters.</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn sm" onclick="UI.prepDept='all';UI.prepFmt='all';renderPrep()">Reset Filters</button>${S.orders.length ? '' : '<button class="btn sm pri" onclick="loadDemo()">Load Demo Orders</button>'}</div></div>`;
     return;
   }
   const keys = catKeys().filter(k => UI.prepDept === 'all' || catDept(k) === UI.prepDept);
@@ -1021,7 +1080,7 @@ function renderPrep() {
           ${b.stations[k].map(r => { const key = b.slot.time + '|' + r.dish.id; const done = !!S.prepDone[key]; return `
           <div class="dish ${done ? 'done' : ''}" onclick="togglePrep('${key}')">
             <div class="dish-top"><span class="chk">${done ? '✓' : ''}</span><span class="dish-name">${esc(r.dish.name)}</span><span class="dish-qty">${r.total}<small>${esc(r.dish.unit)}</small></span></div>
-            <div class="alloc">${r.alloc.map(a => `<div><span>${fmtBadge(a.format)} ${esc(a.order.customer)} ${a.fromSet ? `<em style="color:#a1a1aa">(${esc(a.fromSet)})</em>` : ''}</span><b>${a.qty}</b></div>`).join('')}</div>
+            <div class="alloc">${r.alloc.map(a => `<div><span>${fmtBadge(a.format)} ${esc(a.order.customer)} ${a.order.mobile ? `· <span style="color:#38bdf8">${esc(a.order.mobile)}</span>` : ''} ${a.fromSet ? `<em style="color:#a1a1aa">(${esc(a.fromSet)})</em>` : ''}</span><b>${a.qty}</b></div>`).join('')}</div>
           </div>`; }).join('')}
         </div>`; }).join('')}
       </div>
@@ -1029,49 +1088,154 @@ function renderPrep() {
 }
 
 function togglePrep(key) { S.prepDone[key] = !S.prepDone[key]; if (!S.prepDone[key]) delete S.prepDone[key]; save(); renderPrep(); }
-function resetPrepChecks() { S.prepDone = {}; save(); renderPrep(); }
+function resetPrepChecks() { S.prepDone = {}; save(); renderPrep(); toast('Prep checkmarks reset'); }
 
+/* ============================== Active Orders Screen with Prominent CLEAR Button ============================== */
 function renderOrders() {
   renderTop();
   S.orders.forEach(ensureSlotForOrder);
-  const list = S.orders.filter(o => UI.slot === 'all' || o.slot === UI.slot).sort((a, b) => (a.done - b.done) || a.slot.localeCompare(b.slot) || a.createdAt - b.createdAt);
-  const active = list.filter(o => !o.done), done = list.filter(o => o.done);
-  $('#order-count').textContent = `${active.length} active${done.length ? ` · ${done.length} done` : ''}`;
-  if (!list.length) {
-    $('#orders').innerHTML = `<div class="empty"><div class="big">🧾</div><h3>No orders yet</h3><div>Ingest Word dockets, scan handwriting or add manual orders.</div><button class="btn sm" style="margin-top:8px" onclick="loadDemo()">Load demo orders</button></div>`;
+  const active = S.orders.filter(o => !o.done && (UI.slot === 'all' || o.slot === UI.slot)).sort((a, b) => a.slot.localeCompare(b.slot) || a.createdAt - b.createdAt);
+  $('#order-count').textContent = `${active.length} active tickets · ${S.history?.length || 0} archived`;
+  if (!active.length) {
+    $('#orders').innerHTML = `<div class="empty"><div class="big">🧾</div><h3>No active tickets</h3><div>All orders are prepped and cleared! Drop a Word docket, scan OCR, or add manual.</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn sm pri" onclick="loadDemo()">Load Demo Orders</button><button class="btn sm" onclick="openHistoryModal()">View History</button></div></div>`;
     return;
   }
+
   const card = o => {
-    const items = o.items.map(i => { const d = dishById(i.dishId); return d ? `${esc(d.name)} <b style="color:#e4e4e7">${i.qty}</b>` : ''; }).filter(Boolean).join(' · ');
-    return `<div class="ocard ${o.done ? 'done' : ''}">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span class="cust" style="flex:1">${esc(o.customer)}</span>
+    const items = o.items.map(i => {
+      const d = dishById(i.dishId);
+      return d ? `${esc(d.name)} <b style="color:#e4e4e7">${i.qty}</b>` : '';
+    }).filter(Boolean).join(' · ');
+
+    return `
+    <div class="ocard" id="ocard-${o.id}">
+      <div class="ocard-top">
+        <div>
+          <div class="cust">${esc(o.customer)}</div>
+          ${o.mobile ? `<a class="phone-link" href="tel:${esc(o.mobile)}" title="Call Customer">📞 ${esc(o.mobile)}</a>` : '<span style="font-size:11px;color:var(--mu)">No mobile specified</span>'}
+        </div>
         ${fmtBadge(o.format)}
       </div>
+
       <div class="meta">
         <span class="oid">${esc(o.orderId)}</span>
-        <span class="tag deliv" title="Target Delivery Time">🚚 ${fmtTime(o.deliveryTime)}</span>
-        <span class="tag slot" title="Kitchen Batch Prep Time">🔥 ${fmtTime(o.slot)}</span>
-        <span class="tag">👥 ${o.pax}px</span>
+        <span class="tag deliv" title="Target Customer Delivery Time">🚚 Deliv ${fmtTime(o.deliveryTime)}</span>
+        <span class="tag slot" title="Calculated Kitchen Prep Start Time">🔥 Prep ${fmtTime(o.slot)}</span>
+        <span class="tag">👥 ${o.pax} Pax</span>
+        <span class="tag" style="background:#27272a;color:#cbd5e1">${o.source || 'Docket'}</span>
       </div>
+
+      ${FORMATS[o.format]?.isCatering ? `
+      <div style="margin:4px 0 6px;padding:4px 8px;background:rgba(56,189,248,.08);border-left:3px solid #38bdf8;border-radius:4px;font-size:11.5px;color:#bae6fd;display:flex;align-items:center;gap:6px">
+        <span>📦 <b>Packing & Delivery Ref:</b> ${esc(o.customer)}</span>
+        ${o.mobile ? `<span style="color:#7dd3fc">· 📞 ${esc(o.mobile)}</span>` : ''}
+        <span class="spacer"></span>
+        <span style="font-size:10px;color:var(--mu);text-transform:uppercase">Catering Set · Price Matrix Disabled</span>
+      </div>` : ''}
+
       <div class="items">${items || '<i>No items</i>'}</div>
+
       <div class="acts">
-        ${o.done ? `<button class="btn sm" onclick="setDone('${o.id}',false)">↩ Restore</button>` : `<button class="btn sm ok" onclick="setDone('${o.id}',true)">✓ Dispatched</button>`}
+        <!-- Prominent High-Contrast CLEAR Button -->
+        <button class="btn-clear" onclick="clearActiveTicket('${o.id}')" title="Bump out of live display & archive to completed history">
+          ✓ CLEAR TICKET
+        </button>
         <button class="btn sm" onclick="openEdit('${o.id}')">✏️ Edit</button>
-        <button class="btn sm icon" onclick="openPrint({orderId:'${o.id}'})">🖨️</button>
+        <button class="btn sm icon" onclick="openPrint({orderId:'${o.id}'})" title="Thermal Docket">🖨️</button>
         <span class="spacer"></span>
         <button class="btn sm icon ghost" onclick="deleteOrder('${o.id}')" title="Delete">🗑</button>
-      </div></div>`;
+      </div>
+    </div>`;
   };
-  $('#orders').innerHTML = active.map(card).join('') + (done.length ? `<div class="pane-head" style="padding:10px 0 6px"><h2>Dispatched</h2><span class="spacer"></span><button class="btn sm ghost" onclick="clearDispatched()">Clear</button></div>` + done.map(card).join('') : '');
+
+  $('#orders').innerHTML = active.map(card).join('');
 }
 
-function setDone(id, v) { const o = S.orders.find(o => o.id === id); if (o) { o.done = v; save(); renderOrders(); toast(v ? `${o.customer} dispatched` : 'Order restored', v ? 'ok' : ''); } }
-function deleteOrder(id) { const o = S.orders.find(o => o.id === id); if (o && confirm(`Delete order for ${o.customer}?`)) { S.orders = S.orders.filter(x => x.id !== id); save(); renderOrders(); } }
-function clearDispatched() { S.orders = S.orders.filter(o => !o.done); save(); renderOrders(); }
+/* Clear active order ticket -> bump out of live display into archive history */
+function clearActiveTicket(id) {
+  const idx = S.orders.findIndex(o => o.id === id);
+  if (idx === -1) return;
+  const o = S.orders[idx];
+  o.done = true;
+  o.clearedAt = Date.now();
+  S.orders.splice(idx, 1);
+  (S.history ||= []).unshift(o);
+  save();
+  renderOrders();
+  toast(`✓ ${o.customer} cleared & archived`, 'ok');
+}
 
-function loadDemo() { S.orders = demoOrders(); save(); if (UI.pane === 'prep') renderPrep(); else renderOrders(); toast('Hjh Maimunah demo catering loaded ✓', 'ok'); }
-function loadDemo() { S.orders = demoOrders(); save(); if (UI.pane === 'prep') renderPrep(); else renderOrders(); toast('Hjh Maimunah demo catering loaded ✓', 'ok'); }
+function restoreArchivedOrder(id) {
+  const idx = S.history.findIndex(o => o.id === id);
+  if (idx === -1) return;
+  const o = S.history[idx];
+  o.done = false;
+  o.clearedAt = null;
+  S.history.splice(idx, 1);
+  S.orders.unshift(o);
+  save();
+  openHistoryModal();
+  if (UI.pane === 'orders') renderOrders();
+  else if (UI.pane === 'prep') renderPrep();
+  toast(`↩ Restored ${o.customer} to active KDS`, 'ok');
+}
+
+function deleteOrder(id) {
+  const o = S.orders.find(o => o.id === id);
+  if (o && confirm(`Delete order ticket for ${o.customer}?`)) {
+    S.orders = S.orders.filter(x => x.id !== id);
+    save(); renderOrders(); toast('Ticket deleted');
+  }
+}
+
+function openHistoryModal() {
+  const list = S.history || [];
+  openModal(`
+    <div class="mh">
+      <div>
+        <div class="mt">📜 Completed Prep History Log</div>
+        <div class="ms">${list.length} archived tickets</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mb">
+      ${!list.length ? `<div class="empty"><div class="big">📜</div><h3>History Log Empty</h3><div>Active tickets cleared from KDS will appear here.</div></div>`
+        : list.map(o => `
+        <div class="ocard" style="opacity:.85;margin-bottom:8px">
+          <div class="ocard-top">
+            <div>
+              <div class="cust">${esc(o.customer)}</div>
+              ${o.mobile ? `<span style="font-size:11px;color:#38bdf8">${esc(o.mobile)}</span>` : ''}
+            </div>
+            ${fmtBadge(o.format)}
+          </div>
+          <div class="meta">
+            <span class="oid">${esc(o.orderId)}</span>
+            <span class="tag">🚚 ${fmtTime(o.deliveryTime)}</span>
+            <span class="tag">👥 ${o.pax}px</span>
+            <span class="tag ok">✓ Cleared ${o.clearedAt ? new Date(o.clearedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Done'}</span>
+          </div>
+          <div class="acts">
+            <button class="btn sm ok" onclick="restoreArchivedOrder('${o.id}')">↩ Restore to KDS</button>
+            <button class="btn sm icon" onclick="openPrint({orderId:'${o.id}'})">🖨️</button>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="mf">
+      ${list.length ? `<button class="btn sm danger" onclick="if(confirm('Clear entire history log?')){S.history=[];save();openHistoryModal();}">Clear History</button>` : ''}
+      <span class="spacer"></span>
+      <button class="btn sm pri" onclick="closeModal()">Close</button>
+    </div>`);
+}
+
+function loadDemo() {
+  S.orders = demoOrders();
+  save();
+  if (UI.pane === 'prep') renderPrep();
+  else renderOrders();
+  toast('Hjh Maimunah catering demo orders loaded ✓', 'ok');
+}
 
 /* ============================== Modals & Order Editing ============================== */
 function openModal(html) { $('#modal-root').innerHTML = `<div class="ov" onmousedown="if(event.target===this&&!SC.draft)closeModal()"><div class="modal">${html}</div></div>`; }
@@ -1081,60 +1245,70 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#modal-
 function openManual() {
   const t = '12:00', s = calcPrepTime(t, 'LB');
   openModal(`
-    <div class="mh"><div><div class="mt">✍️ Manual Catering Order</div><div class="ms">Enter items line by line. Sets automatically explode for station cooking.</div></div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
+    <div class="mh"><div><div class="mt">✍️ Manual Catering Order</div><div class="ms">Enter customer name, mobile & dishes.</div></div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
     <div class="mb">
       <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:8px">
-        <div><label class="f">Customer / Event</label><input id="mo-c" placeholder="Shopee SG (Townhall)"></div>
-        <div><label class="f">Order ID</label><input id="mo-i" class="mono" value="#CAT-${S.seq++}"></div>
+        <div><label class="f">Customer / Event Name</label><input id="mo-c" placeholder="Shopee SG (Townhall)"></div>
+        <div><label class="f">Mobile Number</label><input id="mo-m" placeholder="+65 9123 4567"></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
         <div>
           <label class="f">Format</label>
           <select id="mo-fmt" onchange="syncManualTimes()">
+            <option value="BSU">🍛 [BSU] Buffet Set Up</option>
             <option value="MBC">🥘 [MBC] Mini Buffet</option>
             <option value="LB" selected>🍱 [LB] Lunchbox</option>
-            <option value="BSU">🍛 [BSU] Buffet Set Up</option>
             <option value="BB">🍱 [BB] Bento Box</option>
-            <option value="ALA">🛍️ [ALA] Retail</option>
+            <option value="AC">🛍️ [AC] Ala Carte</option>
           </select>
         </div>
         <div><label class="f">Delivery Time</label><input type="time" id="mo-deliv" value="${t}" onchange="syncManualTimes()"></div>
         <div><label class="f">Prep Batch</label><input type="time" id="mo-slot" value="${s}"></div>
       </div>
-      <div style="margin-top:10px"><label class="f">Order Items (e.g. 50x Chicken Set A, 50x Blueberry Longan)</label>
-        <textarea id="mo-lines" rows="6" placeholder="50x Chicken Set A&#10;50x Blueberry Longan Bottle&#10;30x Begedel"></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <div><label class="f">Order ID</label><input id="mo-i" class="mono" value="#CAT-${S.seq++}"></div>
+        <div><label class="f">Pax Count</label><input type="number" id="mo-pax" value="35" min="1"></div>
+      </div>
+      <div style="margin-top:8px"><label class="f">Order Items (e.g. 35x Chicken & Beef Buffet, 1x Teh Tarik Dispenser)</label>
+        <textarea id="mo-lines" rows="5" placeholder="35x Chicken & Beef Buffet [MBC]&#10;1x Teh Tarik Dispenser (5L)&#10;35x Begedel"></textarea>
       </div>
     </div>
     <div class="mf"><span class="spacer"></span><button class="btn sm ghost" onclick="closeModal()">Cancel</button><button class="btn sm pri" onclick="saveManual()">Save Order</button></div>`);
 }
+
 function syncManualTimes() {
   const fmt = $('#mo-fmt').value;
   const d = $('#mo-deliv').value;
   $('#mo-slot').value = calcPrepTime(d, fmt);
 }
+
 function saveManual() {
   const customer = $('#mo-c').value.trim() || 'Walk-in Customer';
+  const mobile = $('#mo-m').value.trim();
   const orderId = $('#mo-i').value.trim() || '#CAT-' + Date.now().toString().slice(-4);
   const format = $('#mo-fmt').value;
   const deliveryTime = $('#mo-deliv').value;
   const slot = $('#mo-slot').value || calcPrepTime(deliveryTime, format);
+  const pax = parseInt($('#mo-pax').value, 10) || 10;
   const lines = $('#mo-lines').value.split('\n').filter(l => l.trim());
   const items = lines.map(analyze).filter(a => a.dishId).map(a => ({ dishId: a.dishId, qty: a.qty }));
   if (!items.length) return toast('Add at least 1 valid menu item', 'err');
-  S.orders.unshift({ id: uid(), customer, orderId, format, deliveryTime, slot, source: 'Manual', items, pax: paxOf(items), createdAt: Date.now(), done: false });
+  S.orders.unshift({ id: uid(), customer, mobile, orderId, format, deliveryTime, slot, source: 'Manual', items, pax, createdAt: Date.now(), done: false, clearedAt: null });
   save(); closeModal(); if (UI.pane === 'prep') renderPrep(); else renderOrders(); toast('Order added ✓', 'ok');
 }
 
 function openEdit(id) {
   const o = S.orders.find(x => x.id === id); if (!o) return;
+  window._eo_id = id;
+  window._eo = JSON.parse(JSON.stringify(o.items));
   openModal(`
-    <div class="mh"><div><div class="mt">✏️ Edit Order</div><div class="ms">${esc(o.orderId)} · ${esc(o.customer)}</div></div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
+    <div class="mh"><div><div class="mt">✏️ Edit Order Ticket</div><div class="ms">${esc(o.orderId)} · ${esc(o.customer)}</div></div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
     <div class="mb">
       <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:8px">
-        <div><label class="f">Customer</label><input id="eo-c" value="${esc(o.customer)}"></div>
-        <div><label class="f">Order ID</label><input id="eo-i" class="mono" value="${esc(o.orderId)}"></div>
+        <div><label class="f">Customer Name</label><input id="eo-c" value="${esc(o.customer)}"></div>
+        <div><label class="f">Mobile Number</label><input id="eo-m" value="${esc(o.mobile || '')}"></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
         <div>
           <label class="f">Format</label>
           <select id="eo-fmt" onchange="$('#eo-slot').value=calcPrepTime($('#eo-deliv').value,this.value)">
@@ -1144,200 +1318,41 @@ function openEdit(id) {
         <div><label class="f">Delivery Time</label><input type="time" id="eo-deliv" value="${o.deliveryTime}" onchange="$('#eo-slot').value=calcPrepTime(this.value,$('#eo-fmt').value)"></div>
         <div><label class="f">Prep Batch</label><input type="time" id="eo-slot" value="${o.slot}"></div>
       </div>
-      <div style="margin-top:12px"><label class="f">Items</label><div id="eo-items" style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <div><label class="f">Order ID</label><input id="eo-i" class="mono" value="${esc(o.orderId)}"></div>
+        <div><label class="f">Pax Count</label><input type="number" id="eo-pax" value="${o.pax}" min="1"></div>
+      </div>
+      <div style="margin-top:10px"><label class="f">Items</label><div id="eo-items" style="display:flex;flex-direction:column;gap:6px">
         ${o.items.map((it, idx) => `
-          <div style="display:grid;grid-template-columns:1fr 70px 32px;gap:6px;align-items:center">
+          <div style="display:grid;grid-template-columns:1fr 65px 30px;gap:6px;align-items:center">
             <select onchange="oEditItem(${idx},'dishId',this.value)">${S.menu.map(m => `<option value="${m.id}" ${m.id === it.dishId ? 'selected' : ''}>${esc(m.name)} (${esc(m.unit)})</option>`).join('')}</select>
             <input type="number" min="1" value="${it.qty}" onchange="oEditItem(${idx},'qty',+this.value)">
             <button class="btn sm icon danger" onclick="oDelItem(${idx})">✕</button>
           </div>`).join('')}
-      </div><button class="btn sm" style="margin-top:8px" onclick="oAddItem('${o.id}')">＋ Add Item</button></div>
+      </div><button class="btn sm" style="margin-top:8px" onclick="oAddItem()">＋ Add Item</button></div>
     </div>
     <div class="mf"><button class="btn sm danger" onclick="deleteOrder('${o.id}');closeModal()">Delete</button><span class="spacer"></span><button class="btn sm ghost" onclick="closeModal()">Cancel</button><button class="btn sm pri" onclick="saveEdit('${o.id}')">Save Changes</button></div>`);
-  window._eo = JSON.parse(JSON.stringify(o.items));
 }
 function oEditItem(idx, k, v) { window._eo[idx][k] = v; }
 function oDelItem(idx) { window._eo.splice(idx, 1); openEdit(window._eo_id); }
-function oAddItem(id) { window._eo.push({ dishId: S.menu[0]?.id, qty: 10 }); openEdit(id); }
+function oAddItem() { window._eo.push({ dishId: S.menu[0]?.id, qty: 10 }); openEdit(window._eo_id); }
 function saveEdit(id) {
   const o = S.orders.find(x => x.id === id); if (!o) return;
   o.customer = $('#eo-c').value.trim();
+  o.mobile = $('#eo-m').value.trim();
   o.orderId = $('#eo-i').value.trim();
   o.format = $('#eo-fmt').value;
   o.deliveryTime = $('#eo-deliv').value;
   o.slot = $('#eo-slot').value || calcPrepTime(o.deliveryTime, o.format);
+  o.pax = parseInt($('#eo-pax').value, 10) || paxOf(o.items);
   o.items = window._eo.filter(it => it.dishId && it.qty > 0);
-  o.pax = paxOf(o.items);
   save(); closeModal(); if (UI.pane === 'prep') renderPrep(); else renderOrders(); toast('Order updated ✓', 'ok');
 }
 
-/* ============================== Mobile Scanner & Word Parser ============================== */
+/* ============================== Ingestion Actions & Action Sheets ============================== */
 const SC = { queue: [], idx: 0, draft: null, scanning: false };
 const isPdfFile = f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
 const isWordFile = f => /\.(docx?|rtf|txt)$/i.test(f.name) || /msword|officedocument\.wordprocessingml/i.test(f.type);
-
-function startIngest(files) {
-  files = [...files].filter(f => /^image\//.test(f.type) || isPdfFile(f) || isWordFile(f) || /\.(jpe?g|png|webp|pdf|docx?|rtf|txt)$/i.test(f.name));
-  if (!files.length) return toast('Drop JPG, PNG, PDF or Word (.docx)', 'err');
-  SC.queue = files; SC.idx = 0; scanNext();
-}
-
-async function scanNext() {
-  const f = SC.queue[SC.idx]; if (!f) { closeScanner(); return; }
-  const isDocx = isWordFile(f);
-  const isPdf = isPdfFile(f);
-  let wordTxt = '';
-  if (isDocx) {
-    wordTxt = await extractWordText(f);
-  }
-  const url = isDocx ? '' : URL.createObjectURL(f);
-  SC.draft = {
-    file: f, fileUrl: url, isWord: isDocx, isPdf, wordText: wordTxt,
-    customer: f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-    orderId: '#CAT-' + (S.seq++),
-    format: /mbc|mini\s*buffet/i.test(f.name + wordTxt) ? 'MBC' : /bsu|buffet\s*set/i.test(f.name + wordTxt) ? 'BSU' : /bento|bb/i.test(f.name + wordTxt) ? 'BB' : 'LB',
-    deliveryTime: '12:00', slot: '10:30', lines: [],
-  };
-  SC.draft.slot = calcPrepTime(SC.draft.deliveryTime, SC.draft.format);
-  renderScanner();
-  await runSimScan();
-}
-
-function renderScanner() {
-  const d = SC.draft; if (!d) return;
-  const isLines = UI.spane === 'lines';
-  $('#modal-root').innerHTML = `
-    <div class="ov"><div class="modal">
-      <div class="mh">
-        <div><div class="mt">🔍 Ingestion Parser (${SC.idx + 1}/${SC.queue.length})</div><div class="ms">${esc(d.file.name)}</div></div>
-        <span class="spacer"></span>
-        <button class="btn sm icon ghost" onclick="closeScanner()">✕</button>
-      </div>
-      <div class="scan-tabs">
-        <button class="${!isLines ? 'on' : ''}" onclick="UI.spane='doc';renderScanner()">📄 Document View</button>
-        <button class="${isLines ? 'on' : ''}" onclick="UI.spane='lines';renderScanner()">📋 Extracted Items (${d.lines.length})</button>
-      </div>
-      <div class="scan-body" data-spane="${UI.spane}">
-        <div class="scan-left">
-          <div class="pv" id="sc-pv">
-            ${d.isWord ? `<div class="word-pv"><h4>📝 Word Ingestion Preview</h4><div>Format: <b>${d.format}</b></div><pre>${esc(d.wordText || 'Parsing Word OOXML text…')}</pre></div>`
-              : d.isPdf ? `<object data="${d.fileUrl}" type="application/pdf"><div class="word-pv">PDF Preview</div></object>`
-              : `<img src="${d.fileUrl}">`}
-            ${SC.scanning ? '<div class="scanline"></div>' : ''}
-          </div>
-        </div>
-        <div class="scan-right">
-          <div class="oform">
-            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:6px">
-              <div><label class="f">Customer / Event</label><input value="${esc(d.customer)}" oninput="SC.draft.customer=this.value"></div>
-              <div><label class="f">Order ID</label><input class="mono" value="${esc(d.orderId)}" oninput="SC.draft.orderId=this.value"></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-              <div>
-                <label class="f">Format</label>
-                <select onchange="SC.draft.format=this.value;SC.draft.slot=calcPrepTime(SC.draft.deliveryTime,this.value);$('#sc-slot').value=SC.draft.slot">
-                  ${Object.keys(FORMATS).map(k => `<option value="${k}" ${d.format === k ? 'selected' : ''}>${FORMATS[k].icon} [${k}]</option>`).join('')}
-                </select>
-              </div>
-              <div><label class="f">Delivery</label><input type="time" value="${d.deliveryTime}" oninput="SC.draft.deliveryTime=this.value;SC.draft.slot=calcPrepTime(this.value,SC.draft.format);$('#sc-slot').value=SC.draft.slot"></div>
-              <div><label class="f">Prep Batch</label><input type="time" id="sc-slot" value="${d.slot}" oninput="SC.draft.slot=this.value"></div>
-            </div>
-          </div>
-          <div class="lines" id="sc-lines">
-            ${SC.scanning ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>' : renderScanLines()}
-          </div>
-        </div>
-      </div>
-      <div class="mf">
-        <span class="sumbar" id="sc-sum"></span>
-        <span class="spacer"></span>
-        <button class="btn sm" onclick="skipScan()">Skip</button>
-        <button class="btn sm pri" id="sc-confirm" onclick="confirmScan()" ${SC.scanning ? 'disabled' : ''}>Confirm & Next</button>
-      </div>
-    </div></div>`;
-  syncScanSummary();
-}
-
-async function runSimScan() {
-  SC.scanning = true;
-  await sleep(400);
-  const d = SC.draft;
-  let rawLines = [];
-  if (d.isWord && d.wordText) {
-    rawLines = d.wordText.split('\n').map(s => s.trim()).filter(Boolean);
-  } else {
-    // Simulated realistic OCR from invoice/docket
-    rawLines = [
-      '50x Chicken Set A [LB]',
-      '50x Blueberry Longan Bottle',
-      '30x Begedel',
-      '2x Sambal Belacan Jar'
-    ];
-  }
-  d.lines = rawLines.map(analyze);
-  SC.scanning = false;
-  renderScanner();
-}
-
-function renderScanLines() {
-  const d = SC.draft; if (!d) return '';
-  return d.lines.map((ln, i) => `
-    <div class="ln lv-${ln.level} ${ln.include ? '' : 'off'}">
-      <button class="tick" onclick="toggleLine(${i})">${ln.include ? '✓' : ''}</button>
-      <div>
-        <div style="font-weight:700;font-size:12.5px">${esc(ln.text)}</div>
-        <div class="ln-sub">
-          <span class="badge ${ln.level}">${ln.level}</span>
-          <span class="conf">Score: <b>${Math.round(ln.score * 100)}%</b></span>
-        </div>
-      </div>
-      <input type="number" class="ln-qty" value="${ln.qty}" onchange="SC.draft.lines[${i}].qty=+this.value">
-      <select class="ln-sel" onchange="setLineDish(${i},this.value)">
-        <option value="">— Select dish —</option>
-        ${S.menu.map(m => `<option value="${m.id}" ${m.id === (ln.dishId || ln.suggestId) ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}
-      </select>
-    </div>`).join('');
-}
-function toggleLine(i) { SC.draft.lines[i].include = !SC.draft.lines[i].include; renderScanner(); }
-function setLineDish(i, id) { SC.draft.lines[i].dishId = id; SC.draft.lines[i].include = !!id; SC.draft.lines[i].level = 'manual'; renderScanner(); }
-function syncScanSummary() {
-  const d = SC.draft; if (!d) return;
-  const inc = d.lines.filter(l => l.include && l.dishId);
-  const el = $('#sc-sum');
-  if (el) el.innerHTML = `<b>${inc.length}</b> items confirmed · Format: <b>${d.format}</b>`;
-}
-
-function confirmScan() {
-  const d = SC.draft; if (!d) return;
-  const items = d.lines.filter(l => l.include && l.dishId).map(l => ({ dishId: l.dishId, qty: l.qty }));
-  if (!items.length) return toast('Select at least 1 item', 'err');
-  S.orders.unshift({
-    id: uid(), customer: d.customer || 'Catering Client', orderId: d.orderId,
-    format: d.format || 'LB', deliveryTime: d.deliveryTime, slot: d.slot,
-    source: d.isWord ? 'Word' : d.isPdf ? 'PDF' : 'Photo', items, pax: paxOf(items),
-    createdAt: Date.now(), done: false
-  });
-  save(); toast('Docket saved ✓', 'ok');
-  SC.idx++;
-  if (SC.idx < SC.queue.length) scanNext(); else closeScanner();
-}
-function skipScan() { SC.idx++; if (SC.idx < SC.queue.length) scanNext(); else closeScanner(); }
-function closeScanner() {
-  if (SC.draft?.fileUrl) URL.revokeObjectURL(SC.draft.fileUrl);
-  SC.draft = null; SC.queue = []; closeModal();
-  if (UI.pane === 'prep') renderPrep(); else renderOrders();
-}
-
-function openSampleScan() {
-  const b = new Blob(['simulated photo'], { type: 'image/jpeg' });
-  b.name = 'Maybank_Townhall_LB.jpg';
-  startIngest([b]);
-}
-function openSampleWord() {
-  const b = new Blob([`HJH MAIMUNAH RESTAURANT PTE LTD\nCATERING ORDER RUNSHEET\nFormat: [MBC] Mini Buffet Catering\nEvent: Shopee SG Townhall\nDelivery: 12:00 PM\n\nItems:\n35x Chicken & Beef Buffet [MBC]\n1x Teh Tarik Dispenser (5L)\n35x Begedel`], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-  b.name = 'Shopee_Townhall_MBC.docx';
-  startIngest([b]);
-}
 
 function triggerScanSheet() {
   openModal(`
@@ -1376,6 +1391,177 @@ function triggerWordSheet() {
       </button>
     </div>
     <div class="mf"><button class="btn sm ghost" style="width:100%" onclick="closeModal()">Cancel</button></div>`);
+}
+
+function openSampleScan() {
+  const b = new Blob(['simulated photo'], { type: 'image/jpeg' });
+  b.name = 'Maybank_Townhall_LB.jpg';
+  startIngest([b]);
+}
+function openSampleWord() {
+  const b = new Blob([`HJH MAIMUNAH RESTAURANT PTE LTD\nCATERING ORDER RUNSHEET\nCustomer: Shopee SG (Regional Townhall)\nMobile: +65 9876 5432\nPax: 35\nFormat: [MBC] Mini Buffet Catering\nDelivery: 12:00 PM\n\nItems:\n35x Chicken & Beef Buffet [MBC]\n1x Teh Tarik Dispenser (5L)\n35x Begedel`], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  b.name = 'Shopee_Townhall_MBC.docx';
+  startIngest([b]);
+}
+
+function startIngest(files) {
+  files = [...files].filter(f => /^image\//.test(f.type) || isPdfFile(f) || isWordFile(f) || /\.(jpe?g|png|webp|pdf|docx?|rtf|txt)$/i.test(f.name));
+  if (!files.length) return toast('Drop JPG, PNG, PDF or Word (.docx)', 'err');
+  SC.queue = files; SC.idx = 0; scanNext();
+}
+
+async function scanNext() {
+  const f = SC.queue[SC.idx]; if (!f) { closeScanner(); return; }
+  const isDocx = isWordFile(f);
+  const isPdf = isPdfFile(f);
+  let wordTxt = '';
+  if (isDocx) {
+    wordTxt = await extractWordText(f);
+  }
+  const meta = extractMetadataFromText(wordTxt, f.name);
+  const url = isDocx ? '' : URL.createObjectURL(f);
+  SC.draft = {
+    file: f, fileUrl: url, isWord: isDocx, isPdf, wordText: wordTxt,
+    customer: meta.customer || 'Catering Client',
+    mobile: meta.mobile || '',
+    orderId: '#CAT-' + (S.seq++),
+    format: meta.format || 'LB',
+    deliveryTime: meta.deliveryTime || '12:00',
+    slot: calcPrepTime(meta.deliveryTime || '12:00', meta.format || 'LB'),
+    pax: meta.pax || 10,
+    lines: [],
+  };
+  renderScanner();
+  await runSimScan();
+}
+
+function renderScanner() {
+  const d = SC.draft; if (!d) return;
+  const isLines = UI.spane === 'lines';
+  $('#modal-root').innerHTML = `
+    <div class="ov"><div class="modal">
+      <div class="mh">
+        <div><div class="mt">🔍 Ingestion Parser (${SC.idx + 1}/${SC.queue.length})</div><div class="ms">${esc(d.file.name)}</div></div>
+        <span class="spacer"></span>
+        <button class="btn sm icon ghost" onclick="closeScanner()">✕</button>
+      </div>
+      <div class="scan-tabs">
+        <button class="${!isLines ? 'on' : ''}" onclick="UI.spane='doc';renderScanner()">📄 Document View</button>
+        <button class="${isLines ? 'on' : ''}" onclick="UI.spane='lines';renderScanner()">📋 Extracted Items (${d.lines.length})</button>
+      </div>
+      <div class="scan-body" data-spane="${UI.spane}">
+        <div class="scan-left">
+          <div class="pv" id="sc-pv">
+            ${d.isWord ? `<div class="word-pv"><h4>📝 Word Ingestion Preview</h4><div>Format: <b>${d.format}</b></div><pre>${esc(d.wordText || 'Parsing Word text…')}</pre></div>`
+              : d.isPdf ? `<object data="${d.fileUrl}" type="application/pdf"><div class="word-pv">PDF Preview</div></object>`
+              : `<img src="${d.fileUrl}">`}
+            ${SC.scanning ? '<div class="scanline"></div>' : ''}
+          </div>
+        </div>
+        <div class="scan-right">
+          <div class="oform">
+            <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:6px">
+              <div><label class="f">Customer Name</label><input value="${esc(d.customer)}" oninput="SC.draft.customer=this.value"></div>
+              <div><label class="f">Mobile Number</label><input value="${esc(d.mobile)}" oninput="SC.draft.mobile=this.value" placeholder="+65 9123 4567"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              <div>
+                <label class="f">Format</label>
+                <select onchange="SC.draft.format=this.value;SC.draft.slot=calcPrepTime(SC.draft.deliveryTime,this.value);$('#sc-slot').value=SC.draft.slot">
+                  ${Object.keys(FORMATS).map(k => `<option value="${k}" ${d.format === k ? 'selected' : ''}>${FORMATS[k].icon} [${k}]</option>`).join('')}
+                </select>
+              </div>
+              <div><label class="f">Delivery</label><input type="time" value="${d.deliveryTime}" oninput="SC.draft.deliveryTime=this.value;SC.draft.slot=calcPrepTime(this.value,SC.draft.format);$('#sc-slot').value=SC.draft.slot"></div>
+              <div><label class="f">Prep Batch</label><input type="time" id="sc-slot" value="${d.slot}" oninput="SC.draft.slot=this.value"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div><label class="f">Order ID</label><input class="mono" value="${esc(d.orderId)}" oninput="SC.draft.orderId=this.value"></div>
+              <div><label class="f">Pax Count</label><input type="number" value="${d.pax}" oninput="SC.draft.pax=+this.value"></div>
+            </div>
+          </div>
+          <div class="lines" id="sc-lines">
+            ${SC.scanning ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>' : renderScanLines()}
+          </div>
+        </div>
+      </div>
+      <div class="mf">
+        <span class="sumbar" id="sc-sum"></span>
+        <span class="spacer"></span>
+        <button class="btn sm" onclick="skipScan()">Skip</button>
+        <button class="btn sm pri" id="sc-confirm" onclick="confirmScan()" ${SC.scanning ? 'disabled' : ''}>Confirm & Next</button>
+      </div>
+    </div></div>`;
+  syncScanSummary();
+}
+
+async function runSimScan() {
+  SC.scanning = true;
+  await sleep(350);
+  const d = SC.draft;
+  let rawLines = [];
+  if (d.isWord && d.wordText) {
+    rawLines = d.wordText.split('\n').map(s => s.trim()).filter(Boolean)
+      .filter(l => !/^(customer|client|mobile|pax|delivery|time|format|hjh maimunah)/i.test(l));
+  } else {
+    rawLines = [
+      '50x Chicken Set A [LB]',
+      '50x Blueberry Longan Bottle',
+      '30x Begedel',
+      '2x Sambal Belacan Jar'
+    ];
+  }
+  d.lines = rawLines.map(analyze);
+  SC.scanning = false;
+  renderScanner();
+}
+
+function renderScanLines() {
+  const d = SC.draft; if (!d) return '';
+  return d.lines.map((ln, i) => `
+    <div class="ln lv-${ln.level} ${ln.include ? '' : 'off'}">
+      <button class="tick" onclick="toggleLine(${i})">${ln.include ? '✓' : ''}</button>
+      <div>
+        <div style="font-weight:700;font-size:12.5px">${esc(ln.text)}</div>
+        <div class="ln-sub">
+          <span class="badge ${ln.level}">${ln.level}</span>
+          <span class="conf">Score: <b>${Math.round(ln.score * 100)}%</b></span>
+        </div>
+      </div>
+      <input type="number" class="ln-qty" value="${ln.qty}" onchange="SC.draft.lines[${i}].qty=+this.value">
+      <select class="ln-sel" onchange="setLineDish(${i},this.value)">
+        <option value="">— Select dish —</option>
+        ${S.menu.map(m => `<option value="${m.id}" ${m.id === (ln.dishId || ln.suggestId) ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}
+      </select>
+    </div>`).join('');
+}
+function toggleLine(i) { SC.draft.lines[i].include = !SC.draft.lines[i].include; renderScanner(); }
+function setLineDish(i, id) { SC.draft.lines[i].dishId = id; SC.draft.lines[i].include = !!id; SC.draft.lines[i].level = 'manual'; renderScanner(); }
+function syncScanSummary() {
+  const d = SC.draft; if (!d) return;
+  const inc = d.lines.filter(l => l.include && l.dishId);
+  const el = $('#sc-sum');
+  if (el) el.innerHTML = `<b>${inc.length}</b> confirmed · [${d.format}] · ${esc(d.mobile || 'No tel')}`;
+}
+
+function confirmScan() {
+  const d = SC.draft; if (!d) return;
+  const items = d.lines.filter(l => l.include && l.dishId).map(l => ({ dishId: l.dishId, qty: l.qty }));
+  if (!items.length) return toast('Select at least 1 item', 'err');
+  S.orders.unshift({
+    id: uid(), customer: d.customer || 'Catering Client', mobile: d.mobile || '',
+    orderId: d.orderId, format: d.format || 'LB', deliveryTime: d.deliveryTime,
+    slot: d.slot, source: d.isWord ? 'Word' : d.isPdf ? 'PDF' : 'Photo',
+    items, pax: d.pax || paxOf(items), createdAt: Date.now(), done: false, clearedAt: null
+  });
+  save(); toast('Docket saved ✓', 'ok');
+  SC.idx++;
+  if (SC.idx < SC.queue.length) scanNext(); else closeScanner();
+}
+function skipScan() { SC.idx++; if (SC.idx < SC.queue.length) scanNext(); else closeScanner(); }
+function closeScanner() {
+  if (SC.draft?.fileUrl) URL.revokeObjectURL(SC.draft.fileUrl);
+  SC.draft = null; SC.queue = []; closeModal();
+  if (UI.pane === 'prep') renderPrep(); else renderOrders();
 }
 
 /* ============================== LAN Thermal Print Engine ============================== */
@@ -1423,12 +1609,13 @@ function printLines() {
   lines.push({ t: dbl });
 
   if (PR.orderId) {
-    const o = S.orders.find(x => x.id === PR.orderId);
+    const o = S.orders.find(x => x.id === PR.orderId) || S.history?.find(x => x.id === PR.orderId);
     if (!o) return lines;
     const f = FORMATS[o.format] || FORMATS.LB;
     lines.push({ t: ctr(`[${f.code}] ${f.name.toUpperCase()}`), b: true, big: true, c: true });
     lines.push({ t: row('Order ID:', o.orderId), b: true });
     lines.push({ t: row('Customer:', o.customer), b: true });
+    if (o.mobile) lines.push({ t: row('Mobile Tel:', o.mobile), b: true });
     lines.push({ t: row('Target Delivery:', fmtTime(o.deliveryTime) + ' hrs') });
     lines.push({ t: row('Kitchen Prep:', fmtTime(o.slot) + ' hrs') });
     lines.push({ t: row('Total Pax:', o.pax + ' Pax') });
@@ -1493,55 +1680,294 @@ async function doSend() {
   }
 }
 
-/* ============================== Settings Module ============================== */
-function setTab(t) { UI.tab = t; renderSettings(); }
-function renderSettings() {
-  $$('#snav button[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === UI.tab));
-  ({ menu: renderMenuTab, hw: renderHwTab, tpl: renderTplTab, slots: renderSlotsTab })[UI.tab]();
+/* ============================== Dedicated Settings Page & Module ============================== */
+function setTab(t) {
+  UI.tab = t;
+  renderSettings();
 }
 
+function renderSettings() {
+  $$('#snav button[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === UI.tab));
+  ({
+    menu: renderMenuTab,
+    hw: renderHwTab,
+    slots: renderSlotsTab,
+    rules: renderRulesTab,
+    tpl: renderTplTab
+  })[UI.tab]();
+}
+
+/* 1. Dynamic Menu Master Management Module */
 function renderMenuTab() {
   const q = norm(UI.mq), keys = catKeys();
   const rows = S.menu.filter(m => (UI.mst === 'all' || m.station === UI.mst) && (!q || norm([m.name, m.sku, ...m.aliases].join(' ')).includes(q)))
     .sort((a, b) => keys.indexOf(a.station) - keys.indexOf(b.station) || a.sku.localeCompare(b.sku));
+
+  const selCount = UI.selectedMenu.size;
+
   $('#scontent').innerHTML = `
-    <div class="shead"><h1>📋 Hjh Maimunah Menu Master</h1><span class="spacer"></span>
-      <button class="btn sm" onclick="resetToHjhMaster()">🔄 Reset Master</button>
-      <button class="btn sm pri" onclick="editDish()">＋ Dish</button>
+    <div class="shead">
+      <div>
+        <h1>📋 Menu Master Management</h1>
+        <p class="mu" style="font-size:11px">Hjh Maimunah V23 Master Schema · ${S.menu.length} total items</p>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn sm" onclick="resetToHjhMaster()">🔄 Reset to V23 Default</button>
+      <button class="btn sm pri" onclick="editDish()">＋ Add Item</button>
     </div>
-    <div class="card" style="padding:10px 12px">
-      <h3><span>Categories & Routing</span><button class="btn sm ghost" onclick="openCatModal()">✎ Manage</button></h3>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">
-        ${S.categories.map(c => `<div class="tag" style="background:${hexA(c.color,.15)};color:${c.color};font-size:11px;cursor:pointer" onclick="openCatModal()">${esc(c.icon)} <b>${esc(c.name)}</b> <span style="opacity:.6">(${c.dept || 'kitchen'})</span></div>`).join('')}
+
+    <!-- Import / Export & Bulk Operations Card -->
+    <div class="card">
+      <h3>
+        <span>📁 Import & Export Menu Master (.json / .csv)</span>
+        <button class="btn sm ghost" onclick="openCatModal()">🏷️ Stations (${S.categories.length})</button>
+      </h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn sm pri" onclick="$('#f-import-menu').click()">⬆ Import Custom File</button>
+        <button class="btn sm" onclick="exportMenu('json')">⬇ Export JSON</button>
+        <button class="btn sm" onclick="exportMenu('csv')">⬇ Export CSV</button>
+        ${selCount > 0 ? `<button class="btn sm danger" onclick="deleteSelectedDishes()">🗑 Delete Selected (${selCount})</button>` : ''}
+      </div>
+      <div class="note" style="margin-top:8px">
+        Supports .json or .csv. Imported files are strictly validated against the V23 Menu Master schema.
       </div>
     </div>
+
+    <!-- Search & Filter Toolbar -->
     <div class="toolbar">
-      <input placeholder="🔍 Search dishes, SKUs, aliases…" value="${esc(UI.mq)}" oninput="UI.mq=this.value;renderMenuTab()">
-      <div class="chips" style="width:100%;padding:4px 0">${[['all', 'All']].concat(S.categories.map(c => [c.id, c.icon + ' ' + c.name])).map(([k, n]) => `<button class="chip ${UI.mst === k ? 'on' : ''}" onclick="UI.mst='${k}';renderMenuTab()">${esc(n)}</button>`).join('')}</div>
-      <div style="display:flex;gap:6px;width:100%">
-        <button class="btn sm" onclick="exportMenu('json')">⬇ JSON</button>
-        <button class="btn sm" onclick="exportMenu('csv')">⬇ CSV</button>
+      <input placeholder="🔍 Search dishes, SKUs, handwriting aliases…" value="${esc(UI.mq)}" oninput="UI.mq=this.value;renderMenuTab()">
+      <div class="chips" style="width:100%;padding:4px 0">
+        ${[['all', 'All Stations']].concat(S.categories.map(c => [c.id, c.icon + ' ' + c.name])).map(([k, n]) => `<button class="chip ${UI.mst === k ? 'on' : ''}" onclick="UI.mst='${k}';renderMenuTab()">${esc(n)}</button>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;font-size:11.5px;color:var(--mu)">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" onchange="toggleSelectAllMenu(this.checked)" ${rows.length > 0 && rows.every(r => UI.selectedMenu.has(r.id)) ? 'checked' : ''}>
+          <span>Select All (${rows.length})</span>
+        </label>
+        <span>${selCount} selected</span>
       </div>
     </div>
+
+    <!-- Items List -->
     <div class="mcards">
-      ${rows.map(m => `<div class="mcard" onclick="editDish('${m.id}')">
-        <div style="display:flex;align-items:center;gap:6px"><span style="font-weight:750;font-size:13.5px;flex:1">${esc(m.name)}</span>${stBadge(m.station)}</div>
-        <div style="display:flex;gap:6px;font-size:11px;color:var(--mu)"><span class="mono">${esc(m.sku)}</span><span>· ${esc(m.unit)}</span><span>· <b>${catDept(m.station)}</b></span>${m.recipe?.length ? `<span style="color:#a855f7">· 🍱 Explodes into ${m.recipe.length} items</span>` : ''}</div>
-        <div class="al">${m.aliases.map(a => `<span>${esc(a)}</span>`).join('')}</div>
-      </div>`).join('') || `<div class="mu" style="text-align:center;padding:24px">No dishes found.</div>`}
+      ${rows.map(m => {
+        const isSel = UI.selectedMenu.has(m.id);
+        const p = m.pricing || {};
+        const priceStr = p.price ? `$${Number(p.price).toFixed(2)}` : '—';
+        const hasAcMatrix = p.dineInM || p.takeawayM || p.dineInL || p.takeawayL;
+        return `
+        <div class="mcard ${m.isDiscontinued ? 'discontinued' : ''}">
+          <div class="mcard-header">
+            <input type="checkbox" class="mcard-chk" ${isSel ? 'checked' : ''} onclick="event.stopPropagation();toggleSelectDish('${m.id}')">
+            <div style="flex:1" onclick="editDish('${m.id}')">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-weight:750;font-size:13.5px;color:#fff">${esc(m.name)}</span>
+                ${m.isDiscontinued ? '<span class="tag disc">DISCONTINUED</span>' : ''}
+                ${stBadge(m.station)}
+              </div>
+              <div style="display:flex;gap:6px;font-size:11px;color:var(--mu);margin-top:2px">
+                <span class="mono">${esc(m.sku)}</span>
+                <span>· ${esc(m.unit)}</span>
+                <span style="color:#facc15;font-weight:700">· Base: ${priceStr}</span>
+                ${hasAcMatrix ? `<span style="color:#38bdf8">· AC Matrix (M: $${p.dineInM || '—'}, L: $${p.dineInL || '—'})</span>` : ''}
+              </div>
+            </div>
+            <button class="btn sm icon ghost" onclick="editDish('${m.id}')" title="Edit">✏️</button>
+            <button class="btn sm icon danger" onclick="deleteSingleDish('${m.id}')" title="Delete">🗑</button>
+          </div>
+          <div class="al" onclick="editDish('${m.id}')">
+            ${(m.aliases || []).map(a => `<span>${esc(a)}</span>`).join('')}
+          </div>
+        </div>`;
+      }).join('') || `<div class="mu" style="text-align:center;padding:24px">No dishes match filter.</div>`}
     </div>`;
 }
 
+function toggleSelectDish(id) {
+  if (UI.selectedMenu.has(id)) UI.selectedMenu.delete(id);
+  else UI.selectedMenu.add(id);
+  renderMenuTab();
+}
+
+function toggleSelectAllMenu(checked) {
+  const q = norm(UI.mq), keys = catKeys();
+  const rows = S.menu.filter(m => (UI.mst === 'all' || m.station === UI.mst) && (!q || norm([m.name, m.sku, ...m.aliases].join(' ')).includes(q)));
+  if (checked) {
+    rows.forEach(r => UI.selectedMenu.add(r.id));
+  } else {
+    rows.forEach(r => UI.selectedMenu.delete(r.id));
+  }
+  renderMenuTab();
+}
+
+function deleteSelectedDishes() {
+  const count = UI.selectedMenu.size;
+  if (!count) return;
+  if (!confirm(`Delete ${count} selected menu item(s)?`)) return;
+  S.menu = S.menu.filter(m => !UI.selectedMenu.has(m.id));
+  UI.selectedMenu.clear();
+  save();
+  renderMenuTab();
+  toast(`Deleted ${count} items ✓`, 'ok');
+}
+
+function deleteSingleDish(id) {
+  const m = dishById(id);
+  if (!m || !confirm(`Delete "${m.name}"?`)) return;
+  S.menu = S.menu.filter(x => x.id !== id);
+  UI.selectedMenu.delete(id);
+  save();
+  renderMenuTab();
+  toast('Dish deleted ✓');
+}
+
 function resetToHjhMaster() {
-  if (!confirm('Reload default Hjh Maimunah 2026 V23 Menu Master?')) return;
+  if (!confirm('Reload embedded default Hjh Maimunah V23 Master Menu? Any unsaved edits will be replaced.')) return;
   S.categories = DEFAULT_CATEGORIES();
   S.menu = SEED_MENU();
-  save(); renderMenuTab(); toast('Hjh Maimunah Menu V23 restored ✓', 'ok');
+  UI.selectedMenu.clear();
+  save();
+  renderMenuTab();
+  toast('Embedded V23 Master Menu restored ✓', 'ok');
+}
+
+/* In-App Menu Editor (Add / Edit with AC Pricing Matrix & Discontinued Flag) */
+let EDIT = null;
+function editDish(id) {
+  const m = id ? dishById(id) : {
+    id: null, sku: '', name: '', unit: 'pcs', station: S.categories[0]?.id || 'ayam',
+    isDiscontinued: false,
+    pricing: { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null },
+    aliases: [], recipe: []
+  };
+  EDIT = {
+    ...m,
+    pricing: { ...(m.pricing || { price: 4.5, dineInM: null, takeawayM: null, dineInL: null, takeawayL: null }) },
+    aliases: [...(m.aliases || [])],
+    recipe: [...(m.recipe || [])]
+  };
+
+  openModal(`
+    <div class="mh">
+      <div>
+        <div class="mt">${id ? '✏️ Edit Menu Item' : '＋ Add New Menu Item'}</div>
+        <div class="ms">Configure station, AC pricing matrix, and handwriting OCR aliases.</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mb">
+      <div>
+        <label class="f">Dish / Item Name</label>
+        <input id="ed-name" value="${esc(m.name)}" placeholder="e.g. Ayam Goreng Khalasan">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <div>
+          <label class="f">SKU / ID</label>
+          <input id="ed-sku" class="mono" value="${esc(m.sku)}" placeholder="Auto">
+        </div>
+        <div>
+          <label class="f">Portion Unit</label>
+          <select id="ed-unit">${UNITS.map(u => `<option ${u === m.unit ? 'selected' : ''}>${u}</option>`).join('')}</select>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <label class="f">Station Category & Routing</label>
+        <select id="ed-st">${S.categories.map(c => `<option value="${c.id}" ${c.id === m.station ? 'selected' : ''}>${c.icon} ${c.name} (${c.dept || 'kitchen'})</option>`).join('')}</select>
+      </div>
+
+      <!-- AC Pricing Matrix -->
+      <div class="card" style="margin-top:10px;padding:10px">
+        <h3 style="margin-bottom:6px">💰 Ala Carte (AC) Pricing Matrix</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label class="f">Base / Per-Piece ($)</label>
+            <input type="number" step="0.1" id="ed-p-base" value="${m.pricing?.price || ''}" placeholder="4.50">
+          </div>
+          <div>
+            <label class="f">Dine-In (M) ($)</label>
+            <input type="number" step="0.1" id="ed-p-dim" value="${m.pricing?.dineInM || ''}" placeholder="e.g. 9.00">
+          </div>
+          <div>
+            <label class="f">Takeaway (M) ($)</label>
+            <input type="number" step="0.1" id="ed-p-tam" value="${m.pricing?.takeawayM || ''}" placeholder="e.g. 11.00">
+          </div>
+          <div>
+            <label class="f">Dine-In (L) ($)</label>
+            <input type="number" step="0.1" id="ed-p-dil" value="${m.pricing?.dineInL || ''}" placeholder="e.g. 11.00">
+          </div>
+          <div>
+            <label class="f">Takeaway (L) ($)</label>
+            <input type="number" step="0.1" id="ed-p-tal" value="${m.pricing?.takeawayL || ''}" placeholder="e.g. 13.00">
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <label class="sw">
+              <input type="checkbox" id="ed-disc" ${m.isDiscontinued ? 'checked' : ''}>
+              <i></i> <span style="font-size:12px;color:#ef4444;font-weight:700">Discontinued</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <label class="f">Handwriting / OCR Aliases (comma-separated)</label>
+        <textarea id="ed-al" rows="2" placeholder="ayam khalasan, boneless chicken, fried chicken">${esc(m.aliases.join(', '))}</textarea>
+      </div>
+    </div>
+    <div class="mf">
+      ${id ? `<button class="btn sm danger" onclick="deleteSingleDish('${id}');closeModal()">Delete</button>` : ''}
+      <span class="spacer"></span>
+      <button class="btn sm ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn sm pri" onclick="saveDish()">Save Item</button>
+    </div>`);
+}
+
+function saveDish() {
+  const name = $('#ed-name').value.trim();
+  if (!name) return toast('Item name is required', 'err');
+  let sku = $('#ed-sku').value.trim().toUpperCase();
+  if (!sku) {
+    const pre = (catById($('#ed-st').value).prefix || 'DSH').trim();
+    sku = `${pre}-${String(S.menu.length + 1).padStart(3, '0')}`;
+  }
+  const aliases = [...new Set($('#ed-al').value.split(/[,\n]/).map(s => s.trim()).filter(Boolean))];
+  const unit = $('#ed-unit').value;
+  const station = $('#ed-st').value;
+  const isDiscontinued = $('#ed-disc').checked;
+
+  const numOrNull = v => (v === '' || isNaN(v)) ? null : Number(v);
+  const pricing = {
+    price: numOrNull($('#ed-p-base').value) || 0,
+    dineInM: numOrNull($('#ed-p-dim').value),
+    takeawayM: numOrNull($('#ed-p-tam').value),
+    dineInL: numOrNull($('#ed-p-dil').value),
+    takeawayL: numOrNull($('#ed-p-tal').value)
+  };
+
+  const data = { sku, name, unit, station, isDiscontinued, pricing, aliases, recipe: EDIT.recipe || [] };
+  if (EDIT.id) {
+    Object.assign(dishById(EDIT.id), data);
+  } else {
+    S.menu.push({ id: uid(), ...data });
+  }
+  save();
+  closeModal();
+  renderMenuTab();
+  toast('Item saved to Menu Master ✓', 'ok');
 }
 
 function openCatModal() {
   openModal(`
-    <div class="mh"><div><div class="mt">🏷️ Manage Stations</div><div class="ms">Map categories to Hot Kitchen, Drinks Bar, or Dessert Station.</div></div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
+    <div class="mh">
+      <div>
+        <div class="mt">🏷️ Manage Station Categories</div>
+        <div class="ms">Map stations to Hot Kitchen, Drinks Bar, or Dessert Station.</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
+    </div>
     <div class="mb" id="cat-list">
       ${S.categories.map((c, i) => `
         <div style="display:grid;grid-template-columns:36px 1.2fr 50px 90px 32px;gap:5px;align-items:center;margin-bottom:6px">
@@ -1556,53 +1982,232 @@ function openCatModal() {
           <input type="color" value="${esc(c.color)}" oninput="S.categories[${i}].color=this.value;save()" style="padding:2px;height:38px;cursor:pointer">
         </div>`).join('')}
     </div>
-    <div class="mf"><span class="spacer"></span><button class="btn sm pri" onclick="closeModal();renderSettings();if(UI.pane==='prep')renderPrep()">Done</button></div>`);
+    <div class="mf">
+      <span class="spacer"></span>
+      <button class="btn sm pri" onclick="closeModal();renderSettings();if(UI.pane==='prep')renderPrep()">Done</button>
+    </div>`);
 }
 
-let EDIT = null;
-function editDish(id) {
-  const m = id ? dishById(id) : { id: null, sku: '', name: '', unit: 'pax', station: S.categories[0]?.id || 'ayam', aliases: [], recipe: [] };
-  EDIT = { ...m, aliases: [...m.aliases], recipe: [...(m.recipe || [])] };
+/* ============================== Schema Validation & File Import (.json / .csv) ============================== */
+function validateMenuStructure(parsedItems) {
+  const report = { valid: true, validItems: [], errors: [], warnings: [] };
+  if (!Array.isArray(parsedItems) || !parsedItems.length) {
+    report.valid = false;
+    report.errors.push('File does not contain an array of items.');
+    return report;
+  }
+
+  const existingStations = new Set(S.categories.map(c => c.id));
+  const seenSkus = new Set();
+
+  parsedItems.forEach((it, idx) => {
+    const row = idx + 1;
+    if (!it.name || typeof it.name !== 'string' || !it.name.trim()) {
+      report.errors.push(`Row ${row}: Missing item name.`);
+      return;
+    }
+    const name = it.name.trim();
+    let sku = it.sku ? String(it.sku).trim().toUpperCase() : '';
+    if (!sku) {
+      sku = `ITM-${String(row).padStart(3, '0')}`;
+      report.warnings.push(`Row ${row}: Empty SKU for "${name}", auto-assigned ${sku}.`);
+    }
+    if (seenSkus.has(sku)) {
+      report.warnings.push(`Row ${row}: Duplicate SKU "${sku}" detected.`);
+    }
+    seenSkus.add(sku);
+
+    let station = it.station ? String(it.station).toLowerCase().trim() : 'ayam';
+    if (!existingStations.has(station)) {
+      station = 'ayam';
+      report.warnings.push(`Row ${row}: Station "${it.station}" unknown, defaulted to "ayam".`);
+    }
+
+    const unit = it.unit ? String(it.unit).trim() : 'pcs';
+    const isDiscontinued = Boolean(it.isDiscontinued === true || String(it.isDiscontinued).toLowerCase() === 'true');
+
+    let aliases = [];
+    if (Array.isArray(it.aliases)) aliases = it.aliases.map(a => String(a).trim()).filter(Boolean);
+    else if (typeof it.aliases === 'string') aliases = it.aliases.split(/[|,\n]/).map(a => a.trim()).filter(Boolean);
+
+    const pr = it.pricing || {};
+    const pricing = {
+      price: Number(pr.price ?? it.price) || 0,
+      dineInM: it.dineInM !== undefined && it.dineInM !== '' ? Number(it.dineInM) : (pr.dineInM !== undefined ? Number(pr.dineInM) : null),
+      takeawayM: it.takeawayM !== undefined && it.takeawayM !== '' ? Number(it.takeawayM) : (pr.takeawayM !== undefined ? Number(pr.takeawayM) : null),
+      dineInL: it.dineInL !== undefined && it.dineInL !== '' ? Number(it.dineInL) : (pr.dineInL !== undefined ? Number(pr.dineInL) : null),
+      takeawayL: it.takeawayL !== undefined && it.takeawayL !== '' ? Number(it.takeawayL) : (pr.takeawayL !== undefined ? Number(pr.takeawayL) : null),
+    };
+
+    report.validItems.push({
+      id: uid(),
+      sku, name, station, unit, isDiscontinued, pricing, aliases,
+      recipe: it.recipe || []
+    });
+  });
+
+  if (!report.validItems.length) report.valid = false;
+  return report;
+}
+
+function parseCSVMenu(csvText) {
+  const lines = csvText.split(/\r?\n/).filter(l => l.trim());
+  if (!lines.length) return [];
+  const header = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const items = [];
+  for (let i = 1; i < lines.length; i++) {
+    const raw = lines[i];
+    // CSV regex parser handling quotes
+    const row = [];
+    let field = '', inQuotes = false;
+    for (let c = 0; c < raw.length; c++) {
+      const ch = raw[c];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (raw[c + 1] === '"') { field += '"'; c++; }
+          else inQuotes = false;
+        } else field += ch;
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ',') { row.push(field.trim()); field = ''; }
+        else field += ch;
+      }
+    }
+    row.push(field.trim());
+    if (row.length >= 2 && row[1]) {
+      const obj = {};
+      header.forEach((h, idx) => { obj[h] = row[idx] ?? ''; });
+      items.push(obj);
+    }
+  }
+  return items;
+}
+
+$('#f-import-menu').onchange = async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+
+  try {
+    const txt = await file.text();
+    let rawItems = [];
+    if (file.name.endsWith('.json') || txt.trim().startsWith('{') || txt.trim().startsWith('[')) {
+      const parsed = JSON.parse(txt);
+      rawItems = Array.isArray(parsed) ? parsed : (parsed.items || parsed.menu || []);
+      if (parsed.categories && Array.isArray(parsed.categories)) {
+        S.categories = parsed.categories;
+      }
+    } else {
+      rawItems = parseCSVMenu(txt);
+    }
+
+    const report = validateMenuStructure(rawItems);
+    openImportValidationModal(file.name, report);
+  } catch (err) {
+    toast('Import error: ' + err.message, 'err');
+  }
+};
+
+function openImportValidationModal(filename, report) {
+  window._valid_items = report.validItems;
   openModal(`
-    <div class="mh"><div class="mt">${id ? 'Edit Dish' : 'New Dish'}</div><span class="spacer"></span><button class="btn sm icon ghost" onclick="closeModal()">✕</button></div>
-    <div class="mb">
-      <div><label class="f">Dish Name</label><input id="d-name" value="${esc(m.name)}" placeholder="Ayam Goreng Khalasan"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-        <div><label class="f">SKU</label><input id="d-sku" class="mono" value="${esc(m.sku)}" placeholder="Auto"></div>
-        <div><label class="f">Portion Unit</label><select id="d-unit">${UNITS.map(u => `<option ${u === m.unit ? 'selected' : ''}>${u}</option>`).join('')}</select></div>
+    <div class="mh">
+      <div>
+        <div class="mt">📋 Menu Master Import Validation</div>
+        <div class="ms">${esc(filename)}</div>
       </div>
-      <div style="margin-top:8px"><label class="f">Category & Routing</label><select id="d-st">${S.categories.map(c => `<option value="${c.id}" ${c.id === m.station ? 'selected' : ''}>${c.icon} ${c.name} (${c.dept || 'kitchen'})</option>`).join('')}</select></div>
-      <div style="margin-top:8px"><label class="f">Handwritten Aliases (comma-separated)</label><textarea id="d-al" rows="2">${esc(m.aliases.join(', '))}</textarea></div>
+      <span class="spacer"></span>
+      <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
     </div>
-    <div class="mf">${id ? `<button class="btn sm danger" onclick="deleteDish('${id}')">Delete</button>` : ''}<span class="spacer"></span><button class="btn sm ghost" onclick="closeModal()">Cancel</button><button class="btn sm pri" onclick="saveDish()">Save</button></div>`);
-}
-function saveDish() {
-  const name = $('#d-name').value.trim(); if (!name) return toast('Name required', 'err');
-  let sku = $('#d-sku').value.trim().toUpperCase();
-  if (!sku) { const pre = (catById($('#d-st').value).prefix || 'DSH').trim(); sku = `${pre}-${String(S.menu.length + 1).padStart(3, '0')}`; }
-  const aliases = [...new Set($('#d-al').value.split(/[,\n]/).map(s => s.trim()).filter(Boolean))];
-  const unit = $('#d-unit').value;
-  const station = $('#d-st').value;
-  const data = { sku, name, unit, station, aliases, recipe: EDIT.recipe };
-  if (EDIT.id) Object.assign(dishById(EDIT.id), data); else S.menu.push({ id: uid(), ...data });
-  save(); closeModal(); renderMenuTab(); toast('Dish saved ✓', 'ok');
-}
-function deleteDish(id) {
-  if (!confirm('Delete this dish?')) return;
-  S.menu = S.menu.filter(m => m.id !== id); save(); closeModal(); renderMenuTab();
-}
-function exportMenu(fmt) {
-  if (fmt === 'json') return download('hjh-maimunah-menu.json', JSON.stringify({ app: 'KitchSync Minimal', exported: new Date().toISOString(), categories: S.categories, menu: S.menu }, null, 2), 'application/json');
-  const q = v => /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v;
-  download('hjh-maimunah-menu.csv', ['sku,name,unit,station,aliases', ...S.menu.map(m => [m.sku, m.name, m.unit, m.station, m.aliases.join('|')].map(q).join(','))].join('\n'), 'text/csv');
+    <div class="mb">
+      <div class="card" style="padding:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+          <span>Validation Status:</span>
+          ${report.valid ? '<span class="tag ok">VALID SCHEMA ✓</span>' : '<span class="tag disc">SCHEMA INVALID</span>'}
+        </div>
+        <div style="font-size:12px;margin-top:6px;color:var(--mu)">
+          • Total items validated: <b>${report.validItems.length}</b><br>
+          • Errors: <b style="color:#ef4444">${report.errors.length}</b><br>
+          • Warnings: <b style="color:#f59e0b">${report.warnings.length}</b>
+        </div>
+      </div>
+
+      ${report.errors.length ? `
+        <div class="note" style="border-color:#ef4444;background:rgba(239,68,68,.1);color:#fca5a5;margin-bottom:8px">
+          <b>Errors:</b><br>${report.errors.map(esc).join('<br>')}
+        </div>` : ''}
+
+      ${report.warnings.length ? `
+        <div class="note" style="border-color:#f59e0b;background:rgba(245,158,11,.1);color:#fde047;margin-bottom:8px">
+          <b>Warnings:</b><br>${report.warnings.slice(0, 8).map(esc).join('<br>')}
+          ${report.warnings.length > 8 ? `<br>...and ${report.warnings.length - 8} more` : ''}
+        </div>` : ''}
+
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px">Preview of items to be loaded:</div>
+      <div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--bg2);font-size:11px">
+        ${report.validItems.slice(0, 20).map(it => `<div>• [${esc(it.sku)}] <b>${esc(it.name)}</b> (${esc(it.station)}) - $${it.pricing.price || '0'}</div>`).join('')}
+        ${report.validItems.length > 20 ? `<div style="color:var(--mu);padding-top:4px">...and ${report.validItems.length - 20} more items</div>` : ''}
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn sm ghost" onclick="closeModal()">Cancel</button>
+      <span class="spacer"></span>
+      <button class="btn sm" onclick="applyImportedMenu(window._valid_items, false)" ${!report.valid ? 'disabled' : ''}>Merge with Existing</button>
+      <button class="btn sm pri" onclick="applyImportedMenu(window._valid_items, true)" ${!report.valid ? 'disabled' : ''}>Replace Menu Master</button>
+    </div>`);
+  window._valid_items = report.validItems;
 }
 
+function applyImportedMenu(items, replace = false) {
+  if (!items || !items.length) return;
+  if (replace) {
+    S.menu = items;
+  } else {
+    // Merge by SKU
+    items.forEach(newItem => {
+      const idx = S.menu.findIndex(m => m.sku === newItem.sku);
+      if (idx !== -1) S.menu[idx] = newItem;
+      else S.menu.push(newItem);
+    });
+  }
+  UI.selectedMenu.clear();
+  save();
+  closeModal();
+  renderMenuTab();
+  toast(`Imported ${items.length} items to Menu Master ✓`, 'ok');
+}
+
+function exportMenu(fmt) {
+  if (fmt === 'json') {
+    const payload = {
+      schema: 'hjh-maimunah-v23',
+      exported: new Date().toISOString(),
+      categories: S.categories,
+      items: S.menu
+    };
+    return download('hjh-maimunah-menu-v23.json', JSON.stringify(payload, null, 2), 'application/json');
+  }
+  const q = v => /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v;
+  const header = 'sku,name,station,unit,price,dineInM,takeawayM,dineInL,takeawayL,isDiscontinued,aliases';
+  const rows = S.menu.map(m => {
+    const p = m.pricing || {};
+    return [
+      m.sku, m.name, m.station, m.unit, p.price || 0,
+      p.dineInM || '', p.takeawayM || '', p.dineInL || '', p.takeawayL || '',
+      m.isDiscontinued ? 'true' : 'false',
+      (m.aliases || []).join('|')
+    ].map(q).join(',');
+  });
+  download('hjh-maimunah-menu-v23.csv', [header, ...rows].join('\n'), 'text/csv');
+}
+
+/* 2. Printer Setup Tab */
 function renderHwTab() {
   const p = S.printer;
   $('#scontent').innerHTML = `
-    <div class="shead"><h1>🖨️ LAN Thermal Printer</h1></div>
+    <div class="shead"><h1>🖨️ LAN Thermal Printer Setup</h1></div>
     <div class="card">
-      <h3><span>Network Connection</span><span class="tag ok">Ready</span></h3>
+      <h3><span>Network Connection (Port 9100 RAW TCP)</span><span class="tag ok">Ready</span></h3>
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px">
         <div><label class="f">LAN IP Address</label><input class="mono" id="hw-ip" value="${esc(p.ip)}" onchange="S.printer.ip=this.value;save()"></div>
         <div><label class="f">Port</label><input class="mono" id="hw-port" type="number" value="${p.port}" onchange="S.printer.port=+this.value;save()"></div>
@@ -1610,23 +2215,103 @@ function renderHwTab() {
       <div style="margin-top:10px">
         <label class="f">Paper Roll Width</label>
         <div class="seg">
-          <button class="${p.width === 80 ? 'on' : ''}" onclick="S.printer.width=80;save();renderHwTab()">80mm (42 cols)</button>
-          <button class="${p.width === 58 ? 'on' : ''}" onclick="S.printer.width=58;save();renderHwTab()">58mm (32 cols)</button>
+          <button class="${p.width === 80 ? 'on' : ''}" onclick="S.printer.width=80;save();renderHwTab()">80mm Standard (42 cols)</button>
+          <button class="${p.width === 58 ? 'on' : ''}" onclick="S.printer.width=58;save();renderHwTab()">58mm Compact (32 cols)</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <div>
+          <label class="sw"><input type="checkbox" ${p.autoCut ? 'checked' : ''} onchange="S.printer.autoCut=this.checked;save()"><i></i> Auto-Cut Paper</label>
+        </div>
+        <div>
+          <label class="f">Copies</label>
+          <input type="number" min="1" max="5" value="${p.copies || 1}" onchange="S.printer.copies=+this.value;save()">
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:6px">
-        <button class="btn sm pri" onclick="testThermalPrint()">⚡ Test ESC/POS Cut</button>
+        <button class="btn sm pri" onclick="testThermalPrint()">⚡ Test ESC/POS Raw Cut Receipt</button>
       </div>
     </div>`;
 }
+
 function testThermalPrint() {
-  toast(`Test print sent to ${S.printer.ip}:${S.printer.port} ✓`, 'ok');
+  toast(`Test cut packet sent to ${S.printer.ip}:${S.printer.port} ✓`, 'ok');
 }
 
+/* 3. Buffer & Lead Time Overrides Tab */
+function renderSlotsTab() {
+  S.buffers ||= { BSU: 120, MBC: 90, LB: 90, BB: 90, AC: 45 };
+  $('#scontent').innerHTML = `
+    <div class="shead"><h1>🕒 Catering Lead Time Buffers</h1></div>
+    <div class="card">
+      <div class="note" style="margin-bottom:10px">
+        <b>Automated Prep Start Calculation:</b><br>
+        Kitchen Prep Batch Start = Customer Delivery Drop-Off − Format Buffer.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${Object.keys(FORMATS).map(k => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg2);border:1px solid var(--line);border-radius:8px">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${fmtBadge(k)}
+              <b>${FORMATS[k].name}</b>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <span style="font-size:11px;color:var(--mu)">−</span>
+              <input type="number" min="15" max="300" step="5" style="width:75px;min-height:32px;font-size:13px;text-align:center"
+                value="${S.buffers[k] || FORMATS[k].defaultLead}"
+                onchange="S.buffers['${k}']=+this.value;save();recalcAllOrderSlots();">
+              <span style="font-size:11px;color:var(--mu)">mins</span>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function recalcAllOrderSlots() {
+  S.orders.forEach(o => {
+    o.slot = calcPrepTime(o.deliveryTime, o.format);
+  });
+  save();
+  if (UI.pane === 'prep') renderPrep();
+  else if (UI.pane === 'orders') renderOrders();
+  toast('Lead buffers updated and active batch times recalculated ✓', 'ok');
+}
+
+/* 4. Ingestion & Matching Rules Tab */
+function renderRulesTab() {
+  S.ingestion ||= { minConfidence: 75, fallbackQueue: true };
+  const conf = S.ingestion.minConfidence || 75;
+  $('#scontent').innerHTML = `
+    <div class="shead"><h1>🔍 Ingestion & Fuzzy Match Rules</h1></div>
+    <div class="card">
+      <h3><span>Fuzzy OCR Matching Threshold</span><span class="tag acc">${conf}%</span></h3>
+      <div style="margin:10px 0">
+        <input type="range" min="50" max="95" value="${conf}" style="width:100%" oninput="$('#conf-val').textContent=this.value+'%';S.ingestion.minConfidence=+this.value;save()">
+        <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--mu);margin-top:2px">
+          <span>50% (More lenient)</span>
+          <span id="conf-val" style="font-weight:800;color:var(--tx)">${conf}%</span>
+          <span>95% (Strict)</span>
+        </div>
+      </div>
+      <div class="note">
+        • Scores ≥ 95%: Auto-confirmed as <b>Exact Match</b>.<br>
+        • Scores between ${conf}% and 94%: Tagged as <b>Fuzzy Match</b> with suggestions.<br>
+        • Scores &lt; ${conf}%: Routed to <b>Unmapped Queue</b> for manual confirmation.
+      </div>
+      <div style="margin-top:12px">
+        <label class="sw">
+          <input type="checkbox" ${S.ingestion.fallbackQueue ? 'checked' : ''} onchange="S.ingestion.fallbackQueue=this.checked;save()">
+          <i></i> <span style="font-size:12px">Require manual confirmation for Unmapped items before saving ticket</span>
+        </label>
+      </div>
+    </div>`;
+}
+
+/* 5. Ticket Layout Tab */
 function renderTplTab() {
   const tpl = S.template;
   $('#scontent').innerHTML = `
-    <div class="shead"><h1>📄 Ticket Template</h1></div>
+    <div class="shead"><h1>📄 ESC/POS Ticket Template</h1></div>
     <div class="card">
       <div><label class="f">Header Title</label><input value="${esc(tpl.title)}" oninput="S.template.title=this.value;save()"></div>
       <div style="margin-top:8px"><label class="f">Address / Subheader</label><textarea rows="2" oninput="S.template.shop=this.value;save()">${esc(tpl.shop)}</textarea></div>
@@ -1637,35 +2322,20 @@ function renderTplTab() {
     </div>`;
 }
 
-function renderSlotsTab() {
-  $('#scontent').innerHTML = `
-    <div class="shead"><h1>🕒 Catering Lead Times</h1></div>
-    <div class="card">
-      <div class="note" style="margin-bottom:10px">
-        <b>Rules:</b><br>
-        • <b>BSU (Buffet Set Up)</b>: Delivery − 2.0 hr (120 min lead buffer)<br>
-        • <b>MBC / LB / BB</b>: Delivery − 1.5 hr (90 min kitchen prep)
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        ${Object.keys(FORMATS).map(k => `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg2);border:1px solid var(--line);border-radius:8px">
-            <div>${fmtBadge(k)} <b>${FORMATS[k].name}</b></div>
-            <div style="font-weight:800;color:var(--acc)">−${FORMATS[k].leadMins} mins</div>
-          </div>`).join('')}
-      </div>
-    </div>`;
-}
-
 /* ============================== Ingest Drag and Drop Setup ============================== */
 const drop = $('#drop');
-['dragenter', 'dragover'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('drag'); }));
-['dragleave', 'drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('drag'); }));
-drop.addEventListener('drop', e => { if (e.dataTransfer?.files?.length) startIngest(e.dataTransfer.files); });
+if (drop) {
+  ['dragenter', 'dragover'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop', e => { if (e.dataTransfer?.files?.length) startIngest(e.dataTransfer.files); });
+}
 
 const dropall = $('#dropall');
-window.addEventListener('dragover', e => { e.preventDefault(); dropall.classList.add('drag'); });
-dropall.addEventListener('dragleave', () => dropall.classList.remove('drag'));
-dropall.addEventListener('drop', e => { e.preventDefault(); dropall.classList.remove('drag'); if (e.dataTransfer?.files?.length) startIngest(e.dataTransfer.files); });
+if (dropall) {
+  window.addEventListener('dragover', e => { e.preventDefault(); dropall.classList.add('drag'); });
+  dropall.addEventListener('dragleave', () => dropall.classList.remove('drag'));
+  dropall.addEventListener('drop', e => { e.preventDefault(); dropall.classList.remove('drag'); if (e.dataTransfer?.files?.length) startIngest(e.dataTransfer.files); });
+}
 
 $('#f-upload').onchange = e => { if (e.target.files?.length) startIngest(e.target.files); e.target.value = ''; };
 $('#f-camera').onchange = e => { if (e.target.files?.length) startIngest(e.target.files); e.target.value = ''; };

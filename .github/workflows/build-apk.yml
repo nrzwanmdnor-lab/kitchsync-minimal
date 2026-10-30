@@ -51,28 +51,37 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: v1.0.0
-          name: "KitchSync Minimal APK v1.0.0"
+          tag_name: v1.1.0
+          name: "KitchSync Minimal APK v1.1.0 - Dynamic Menu Master & Prominent Clear Action"
           draft: false
           prerelease: false
+          make_latest: true
           body: |
-            ### 📱 KitchSync Minimal Android APK
+            ### 📱 KitchSync Minimal Android APK v1.1.0
             
-            Android Kitchen Display System (KDS) and Catering Batch Aggregator preloaded with the **Hjh Maimunah Restaurant Pte Ltd V23 Menu Master**.
+            Android Kitchen Display System (KDS) and Catering Batch Aggregator for **Hjh Maimunah Restaurant Pte Ltd**.
             
-            #### 🌟 Features
-            - **Mobile-First Layout**: High-contrast dark theme optimized for hand-held Android mobile operations.
-            - **Catering Formats**: Native support for `[MBC]` Mini Buffet, `[LB]` Lunchbox, `[BSU]` Buffet Set Up, and `[BB]` Bento Box.
-            - **Dual Batch Aggregation**:
-              - 🔥 **Cook Mode**: Explodes package sets into station ingredients (woks, fryers, rice cookers).
-              - 📦 **Pack Mode**: Retains finished packages for packing table assembly.
-            - **Automated Lead Times**:
-              - `BSU` Buffet Set Up: Delivery − 2.0 hr (120 min lead buffer).
-              - `MBC`, `LB`, `BB`: Delivery − 1.5 hr (90 min kitchen prep).
-            - **Multi-Source Ingestion**:
-              - Microsoft Word runsheet parsing (`.docx`, `.doc`).
-              - Camera & image OCR with fuzzy matching confidence scores.
-            - **LAN Thermal Tickets**: ESC/POS network ticket generation for Hot Kitchen, Drinks Bar, Dessert Station, and Order Dockets.
+            #### 🚀 Release Updates (v1.1.0)
+            - **Dynamic Menu Master Management**:
+              - Import custom `.csv` and `.json` menu files with strict V23 schema validation.
+              - In-app CRUD editor: Add/Edit dish with custom ID, Station, and AC pricing matrix.
+              - Discontinued item status flag and multi-select bulk item deletion.
+              - One-tap "Reset to V23 Default" restoring embedded default menu.
+            - **Order Ingestion & Tagging Schema**:
+              - Automated parsing of Customer Name, Mobile Number, and Pax Count.
+              - Format Tagging: `[AC]` Ala Carte, `[MBC]` Mini Buffet, `[LB]` Lunchbox, `[BSU]` Buffet Set Up, `[BB]` Bento Box.
+              - Catering format rule: Customer & Mobile tags strictly bound for packing table & delivery dropoff reference. Pricing matrices and package splitting disabled for catering formats.
+              - Dynamic Lead Buffers: Delivery − 120m for `BSU`, Delivery − 90m for `MBC`/`LB`/`BB`, Delivery − 45m for `AC`.
+            - **High-Contrast Prominent CLEAR Button**:
+              - Large, prominent green `✓ CLEAR TICKET` button on active order cards.
+              - Bumps active ticket off live KDS and archives into Completed Prep History Log with one-tap restore.
+            - **Dedicated Isolated Settings Page**:
+              - Cleaned operational view, moving configurations into top-gear / bottom-bar Settings tab.
+              - Network Thermal Printer Setup (LAN IP, Port 9100 RAW TCP, 80mm/58mm).
+              - Ingestion Rules & OCR Fuzzy Confidence Threshold slider (default 75%).
+            
+            #### 📥 Download & Install
+            Download **`KitchSync-Minimal.apk`** below and install directly on your Android device.
             
             #### 📲 Download & Installation
             Download the attached **`KitchSync-Minimal.apk`** below and install it directly on your Android device.
