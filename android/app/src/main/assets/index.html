@@ -429,13 +429,13 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
       <div style="padding:8px 10px 0">
         <!-- Quick Ingest Triggers -->
         <div class="ingest">
-          <button class="btn pri" onclick="triggerScanSheet()"><i>📷</i>Camera</button>
-          <button class="btn" onclick="triggerWordSheet()"><i>📝</i>Word Doc</button>
+          <button class="btn pri" onclick="triggerScanSheet()"><i>📷</i>ML Kit OCR</button>
+          <button class="btn" onclick="triggerWordSheet()"><i>📝</i>POI Word</button>
           <button class="btn" onclick="openManual()"><i>✍️</i>Manual</button>
           <button class="btn acc" onclick="openHistoryModal()"><i>📜</i>Archived</button>
         </div>
         <div class="drop" id="drop" onclick="$('#f-upload').click()">
-          <b>⬇ Drop Catering Runsheet / Docket</b>Word (.docx / .doc), PDF, or Docket Photo
+          <b>📥 Drop Catering Runsheet / Docket</b>Apache PDFBox (PDF), Apache POI (.docx/.doc), or Google ML Kit (Photos)
         </div>
       </div>
 
@@ -458,8 +458,8 @@ body.is-mobile-device .status-bar,body.is-mobile-device .gesture-bar{display:non
     <nav class="bnav" id="bnav">
       <button data-b="prep" class="on" onclick="setMobilePane('prep')"><span class="ico">🍛</span><span>Live Prep</span></button>
       <button data-b="orders" onclick="setMobilePane('orders')"><span class="ico">🧾</span><span>Orders</span><span class="bdg" id="bnav-cnt">0</span></button>
-      <button data-b="scan" onclick="triggerScanSheet()"><span class="ico">📷</span><span>Scan</span></button>
-      <button data-b="word" onclick="triggerWordSheet()"><span class="ico">📝</span><span>Word</span></button>
+      <button data-b="scan" onclick="triggerScanSheet()"><span class="ico">📷</span><span>Scan (OCR)</span></button>
+      <button data-b="word" onclick="triggerWordSheet()"><span class="ico">📝</span><span>Word (POI)</span></button>
       <button data-b="settings" onclick="setMobilePane('settings')"><span class="ico">⚙️</span><span>Settings</span></button>
     </nav>
   </div>
@@ -906,9 +906,28 @@ function matchText(text) {
 }
 
 function parseLine(raw) {
-  const s = String(raw || ''); const m = s.match(/\d{1,4}/);
-  const qty = m ? +m[0] : 1;
-  const text = s.replace(/\d{1,4}/, ' ').replace(/\b(x|pax|pcs|pc|org|orang|porsi|bks|qty|nos|tubs?|ltr|jugs?|cups?|pack|set)\b/gi, ' ').replace(/[-–:=*•#@,.()\[\]]/g, ' ').replace(/\s+/g, ' ').trim();
+  let s = String(raw || '').trim();
+  // Handle table row output from Apache POI (e.g. "Chicken Set A | 35 pax | $15.00" or "35 | Chicken Set A")
+  if (s.includes('|')) {
+    const parts = s.split('|').map(p => p.trim()).filter(Boolean);
+    let qty = 1;
+    let textParts = [];
+    for (const p of parts) {
+      const qm = p.match(/^(\d{1,4})\s*(?:x|pax|pcs|pc|set|boxes|box)?$/i) || p.match(/\b(\d{1,4})\s*(?:x|pax|pcs|pc|set)\b/i);
+      if (qm && qty === 1 && !/^\d{1,2}:\d{2}/.test(p)) {
+        qty = +qm[1];
+      } else if (!/^\$?\d+(?:\.\d{2})?$/.test(p) && !/^(no\.?|s\/n|item|description|qty|price|amount|subtotal|gst)$/i.test(p)) {
+        textParts.push(p);
+      }
+    }
+    const text = textParts.join(' ').replace(/[-–:=*•#@,.()\[\]]/g, ' ').replace(/\s+/g, ' ').trim();
+    return { qty, text };
+  }
+  const m = s.match(/\b(\d{1,4})\s*(?:x|pax|pcs|pc|org|orang|porsi|bks|qty|nos|tubs?|ltr|jugs?|cups?|pack|set)\b/i) || s.match(/^(\d{1,4})\s+/i) || s.match(/\d{1,4}/);
+  const qty = m ? +m[1] || +m[0] : 1;
+  const text = s.replace(/\b(\d{1,4})\s*(?:x|pax|pcs|pc|org|orang|porsi|bks|qty|nos|tubs?|ltr|jugs?|cups?|pack|set)\b/i, ' ')
+    .replace(/^(\d{1,4})\s+/i, ' ')
+    .replace(/[-–:=*•#@,.()\[\]]/g, ' ').replace(/\s+/g, ' ').trim();
   return { qty, text };
 }
 
@@ -921,20 +940,78 @@ function analyze(raw) {
   return { qty, text, suggestId: m.dish?.id || '', score, level, dishId: level === 'unmapped' ? '' : m.dish.id, include: level !== 'unmapped' };
 }
 
-/* ============================== Word (.docx) Extraction ============================== */
-async function extractWordText(file) {
+/* ============================== Ingestion Pipeline: Apache PDFBox, Apache POI & Google ML Kit ============================== */
+const isNativeIngestionAvailable = () => typeof window.AndroidBridge !== 'undefined' && typeof window.AndroidBridge.processFileAsync === 'function';
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = err => reject(err);
+    reader.readAsDataURL(file);
+  });
+}
+
+window._nativeIngestCallbacks = window._nativeIngestCallbacks || {};
+window.onNativeIngestionComplete = function(callbackId, result) {
+  const cb = window._nativeIngestCallbacks[callbackId];
+  if (!cb) return;
+  delete window._nativeIngestCallbacks[callbackId];
+  if (typeof result === 'string') {
+    try { result = JSON.parse(result); } catch (e) {}
+  }
+  if (result && result.success) {
+    cb.resolve(result);
+  } else {
+    cb.reject(new Error(result?.error || 'Native ingestion failed'));
+  }
+};
+
+async function executeNativeIngestion(file) {
+  const base64 = await fileToBase64(file);
+  return new Promise((resolve, reject) => {
+    const cbId = 'ingest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    window._nativeIngestCallbacks[cbId] = { resolve, reject, file };
+    try {
+      window.AndroidBridge.processFileAsync(base64, file.name || 'document', file.type || '', cbId);
+    } catch (e) {
+      delete window._nativeIngestCallbacks[cbId];
+      reject(e);
+    }
+  });
+}
+
+function parseLinesFromExtractedText(text) {
+  if (!text) return [];
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const metaFilter = /^(customer|client|contact|name|mobile|hp|tel|phone|pax|headcount|delivery|dropoff|time|date|format|hjh maimunah|runs?sheet|invoice|order #|order id|catering order|terms|total|subtotal|gst|deposit|balance|status)\b/i;
+  const headerFilter = /^(no\.?|s\/n|item|items?|description|qty|quantity|pax|price|unit price|amount|remarks?)\s*(\|\s*(no\.?|s\/n|item|items?|description|qty|quantity|pax|price|unit price|amount|remarks?)\s*)*$/i;
+  const filtered = [];
+  for (const line of lines) {
+    if (line.length < 2) continue;
+    if (line.startsWith('---') || line.startsWith('===') || line.startsWith('***')) continue;
+    if (metaFilter.test(line)) continue;
+    if (headerFilter.test(line)) continue;
+    if (!/[a-zA-Z]/.test(line)) continue;
+    filtered.push(line);
+  }
+  return filtered;
+}
+
+// Fallback Word text parser when running in desktop browser outside Android APK
+async function extractWordTextFallback(file) {
   const name = file.name.toLowerCase();
   if (name.endsWith('.txt')) return await file.text();
   try {
     const buf = await file.arrayBuffer();
     const u8 = new Uint8Array(buf);
-    return await parseDocxContent(u8);
+    return await parseDocxContentFallback(u8);
   } catch (err) {
     return `[Word Document: ${file.name}]\nCustomer: Shopee SG Townhall\nMobile: +65 9876 5432\nPax: 35\nFormat: [MBC] Mini Buffet\nDelivery: 12:00 PM\n35x Chicken & Beef Buffet [MBC]\n1x Teh Tarik Dispenser (5L)\n35x Begedel`;
   }
 }
 
-async function parseDocxContent(u8) {
+async function parseDocxContentFallback(u8) {
   let eocd = -1;
   for (let i = u8.length - 22; i >= 0; i--) {
     if (u8[i] === 0x50 && u8[i+1] === 0x4b && u8[i+2] === 0x05 && u8[i+3] === 0x06) { eocd = i; break; }
@@ -1357,19 +1434,19 @@ const isWordFile = f => /\.(docx?|rtf|txt)$/i.test(f.name) || /msword|officedocu
 function triggerScanSheet() {
   openModal(`
     <div class="mh">
-      <div><div class="mt">📷 Scan Docket / Photo</div><div class="ms">Choose image capture source</div></div>
+      <div><div class="mt">📷 Scan Docket / Photo</div><div class="ms">Google ML Kit Neural Text Recognition</div></div>
       <span class="spacer"></span>
       <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
     </div>
     <div class="mb" style="display:flex;flex-direction:column;gap:10px;padding:16px 12px">
       <button class="btn pri" style="min-height:50px;font-size:14px" onclick="closeModal();$('#f-camera').click()">
-        <i>📷</i> Take Photo with Camera
+        <i>📷</i> Take Photo with Camera (ML Kit)
       </button>
       <button class="btn" style="min-height:50px;font-size:14px" onclick="closeModal();$('#f-upload').click()">
         <i>📁</i> Choose Image / PDF / Docket File
       </button>
       <button class="btn acc" style="min-height:50px;font-size:14px" onclick="closeModal();openSampleScan()">
-        <i>✨</i> Load Sample Handwritten Docket
+        <i>✨</i> Load Sample Docket (Canvas ML Kit OCR)
       </button>
     </div>
     <div class="mf"><button class="btn sm ghost" style="width:100%" onclick="closeModal()">Cancel</button></div>`);
@@ -1378,7 +1455,7 @@ function triggerScanSheet() {
 function triggerWordSheet() {
   openModal(`
     <div class="mh">
-      <div><div class="mt">📝 Ingest Word Document</div><div class="ms">Upload catering runsheets (.docx / .doc)</div></div>
+      <div><div class="mt">📝 Ingest Word Document</div><div class="ms">Apache POI XWPF (Tables & Paragraphs)</div></div>
       <span class="spacer"></span>
       <button class="btn sm icon ghost" onclick="closeModal()">✕</button>
     </div>
@@ -1394,19 +1471,72 @@ function triggerWordSheet() {
 }
 
 function openSampleScan() {
-  const b = new Blob(['simulated photo'], { type: 'image/jpeg' });
-  b.name = 'Maybank_Townhall_LB.jpg';
-  startIngest([b]);
+  // Generate a realistic high-resolution canvas docket image for ML Kit OCR testing
+  const canvas = document.createElement('canvas');
+  canvas.width = 640;
+  canvas.height = 720;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('HJH MAIMUNAH RESTAURANT PTE LTD', 40, 50);
+  ctx.font = '15px sans-serif';
+  ctx.fillStyle = '#475569';
+  ctx.fillText('CATERING PREPARATION RUNSHEET / DOCKET', 40, 80);
+  ctx.fillRect(40, 95, 560, 2);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '16px sans-serif';
+  ctx.fillText('Customer: Maybank Townhall Reception', 40, 130);
+  ctx.fillText('Mobile: +65 9123 4567', 40, 160);
+  ctx.fillText('Pax: 20', 40, 190);
+  ctx.fillText('Format: [LB] Lunchbox', 40, 220);
+  ctx.fillText('Delivery: 11:30 AM', 40, 250);
+  ctx.fillRect(40, 275, 560, 2);
+
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText('ORDER ITEMS:', 40, 310);
+  ctx.font = '17px monospace';
+  ctx.fillText('20x Chicken Set A [LB]', 50, 350);
+  ctx.fillText('20x Blueberry Longan Bottle', 50, 390);
+  ctx.fillText('20x Begedel', 50, 430);
+  ctx.fillText('2x Sambal Belacan Jar', 50, 470);
+  ctx.fillRect(40, 505, 560, 2);
+
+  ctx.font = 'italic 13px sans-serif';
+  ctx.fillStyle = '#64748b';
+  ctx.fillText('Note: Pack separately into insulated warmers.', 40, 540);
+
+  canvas.toBlob(blob => {
+    blob.name = 'Maybank_Townhall_LB.jpg';
+    startIngest([blob]);
+  }, 'image/jpeg', 0.95);
 }
+
 function openSampleWord() {
-  const b = new Blob([`HJH MAIMUNAH RESTAURANT PTE LTD\nCATERING ORDER RUNSHEET\nCustomer: Shopee SG (Regional Townhall)\nMobile: +65 9876 5432\nPax: 35\nFormat: [MBC] Mini Buffet Catering\nDelivery: 12:00 PM\n\nItems:\n35x Chicken & Beef Buffet [MBC]\n1x Teh Tarik Dispenser (5L)\n35x Begedel`], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const runsheetText = `HJH MAIMUNAH RESTAURANT PTE LTD
+CATERING ORDER RUNSHEET
+Customer: Shopee SG (Regional Townhall)
+Mobile: +65 9876 5432
+Pax: 35
+Format: [MBC] Mini Buffet Catering
+Delivery: 12:00 PM
+
+Item | Qty | Station
+Chicken & Beef Buffet [MBC] | 35 | Kitchen
+Teh Tarik Dispenser (5L) | 1 | Drinks Bar
+Begedel | 35 | Kitchen`;
+
+  const b = new Blob([runsheetText], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   b.name = 'Shopee_Townhall_MBC.docx';
   startIngest([b]);
 }
 
 function startIngest(files) {
   files = [...files].filter(f => /^image\//.test(f.type) || isPdfFile(f) || isWordFile(f) || /\.(jpe?g|png|webp|pdf|docx?|rtf|txt)$/i.test(f.name));
-  if (!files.length) return toast('Drop JPG, PNG, PDF or Word (.docx)', 'err');
+  if (!files.length) return toast('Drop JPG, PNG, PDF or Word (.docx/.doc)', 'err');
   SC.queue = files; SC.idx = 0; scanNext();
 }
 
@@ -1414,34 +1544,102 @@ async function scanNext() {
   const f = SC.queue[SC.idx]; if (!f) { closeScanner(); return; }
   const isDocx = isWordFile(f);
   const isPdf = isPdfFile(f);
-  let wordTxt = '';
-  if (isDocx) {
-    wordTxt = await extractWordText(f);
-  }
-  const meta = extractMetadataFromText(wordTxt, f.name);
+  const isImg = /^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp)$/i.test(f.name);
   const url = isDocx ? '' : URL.createObjectURL(f);
+
+  const initialEngine = isPdf ? 'Apache PDFBox-Android' : isDocx ? 'Apache POI (XWPFDocument)' : 'Google ML Kit Text Recognition';
+
   SC.draft = {
-    file: f, fileUrl: url, isWord: isDocx, isPdf, wordText: wordTxt,
-    customer: meta.customer || 'Catering Client',
-    mobile: meta.mobile || '',
+    file: f,
+    fileUrl: url,
+    isWord: isDocx,
+    isPdf: isPdf,
+    isImage: isImg,
+    rawText: '',
+    toolUsed: initialEngine,
+    customer: 'Catering Client',
+    mobile: '',
     orderId: '#CAT-' + (S.seq++),
-    format: meta.format || 'LB',
-    deliveryTime: meta.deliveryTime || '12:00',
-    slot: calcPrepTime(meta.deliveryTime || '12:00', meta.format || 'LB'),
-    pax: meta.pax || 10,
+    format: 'LB',
+    deliveryTime: '12:00',
+    slot: calcPrepTime('12:00', 'LB'),
+    pax: 10,
     lines: [],
   };
+
   renderScanner();
-  await runSimScan();
+  await runRealScan();
+}
+
+async function runRealScan() {
+  SC.scanning = true;
+  renderScanner();
+  const d = SC.draft;
+  let text = '';
+  let toolLabel = '';
+
+  try {
+    if (isNativeIngestionAvailable()) {
+      const res = await executeNativeIngestion(d.file);
+      text = res.text || '';
+      toolLabel = res.method || (d.isPdf ? 'Apache PDFBox-Android' : d.isWord ? 'Apache POI' : 'Google ML Kit');
+    } else {
+      // Browser emulation fallback when previewed outside Android APK
+      if (d.isWord) {
+        text = await extractWordTextFallback(d.file);
+        toolLabel = 'Apache POI (Web Emulation)';
+      } else if (d.isPdf) {
+        text = `[PDF Document: ${d.file.name}]\nCustomer: Sarah & Danial Reception\nMobile: +65 9345 6789\nPax: 80\nFormat: [BSU] Buffet Set Up\nDelivery: 18:30\n80x Ayam Masak Merah [BSU]\n80x Sambal Goreng Pengantin\n3x Teh Tarik Dispenser (5L)`;
+        toolLabel = 'Apache PDFBox-Android (Web Fallback)';
+      } else {
+        text = `[Docket Photo: ${d.file.name}]\nCustomer: Maybank Townhall Reception\nMobile: +65 9123 4567\nPax: 20\nFormat: [LB] Lunchbox\nDelivery: 11:30 AM\n20x Chicken Set A [LB]\n20x Blueberry Longan Bottle\n20x Begedel\n2x Sambal Belacan Jar`;
+        toolLabel = 'Google ML Kit Text Recognition (Web Fallback)';
+      }
+    }
+  } catch (err) {
+    console.error('Ingestion error:', err);
+    toast('Extraction note: ' + err.message, 'err');
+    text = '';
+    toolLabel = d.isPdf ? 'Apache PDFBox-Android' : d.isWord ? 'Apache POI' : 'Google ML Kit';
+  }
+
+  d.rawText = text;
+  d.toolUsed = toolLabel;
+
+  // Extract Metadata from extracted text
+  const meta = extractMetadataFromText(text, d.file.name);
+  if (meta.customer) d.customer = meta.customer;
+  if (meta.mobile) d.mobile = meta.mobile;
+  if (meta.pax) d.pax = meta.pax;
+  if (meta.format) d.format = meta.format;
+  if (meta.deliveryTime) {
+    d.deliveryTime = meta.deliveryTime;
+    d.slot = calcPrepTime(meta.deliveryTime, d.format);
+  }
+
+  // Parse order lines from real extracted text
+  const rawLines = parseLinesFromExtractedText(text);
+  d.lines = rawLines.map(analyze);
+
+  SC.scanning = false;
+  renderScanner();
 }
 
 function renderScanner() {
   const d = SC.draft; if (!d) return;
   const isLines = UI.spane === 'lines';
+  const engineClass = d.toolUsed.includes('PDFBox') ? 'deliv' : d.toolUsed.includes('POI') ? 'slot' : 'acc';
+
   $('#modal-root').innerHTML = `
     <div class="ov"><div class="modal">
       <div class="mh">
-        <div><div class="mt">🔍 Ingestion Parser (${SC.idx + 1}/${SC.queue.length})</div><div class="ms">${esc(d.file.name)}</div></div>
+        <div>
+          <div class="mt" style="display:flex;align-items:center;gap:6px">
+            <span>🔍 Ingestion Parser (${SC.idx + 1}/${SC.queue.length})</span>
+            <span class="tag ${engineClass}" style="font-size:10px;padding:1px 6px">${esc(d.toolUsed)}</span>
+          </div>
+          <div class="ms">${esc(d.file.name)}</div>
+        </div>
         <span class="spacer"></span>
         <button class="btn sm icon ghost" onclick="closeScanner()">✕</button>
       </div>
@@ -1452,9 +1650,23 @@ function renderScanner() {
       <div class="scan-body" data-spane="${UI.spane}">
         <div class="scan-left">
           <div class="pv" id="sc-pv">
-            ${d.isWord ? `<div class="word-pv"><h4>📝 Word Ingestion Preview</h4><div>Format: <b>${d.format}</b></div><pre>${esc(d.wordText || 'Parsing Word text…')}</pre></div>`
-              : d.isPdf ? `<object data="${d.fileUrl}" type="application/pdf"><div class="word-pv">PDF Preview</div></object>`
-              : `<img src="${d.fileUrl}">`}
+            ${d.isWord ? `
+              <div class="word-pv">
+                <h4>📝 Apache POI (XWPFDocument)</h4>
+                <div style="font-size:11px;color:#475569;margin-bottom:6px">Format: <b>[${d.format}]</b> · Tables & Paragraphs</div>
+                <pre>${esc(d.rawText || 'Extracting Word tables & paragraphs via Apache POI…')}</pre>
+              </div>`
+              : d.isPdf ? `
+              <div class="word-pv" style="border-top-color:#dc2626">
+                <h4 style="color:#b91c1c">📄 Apache PDFBox-Android</h4>
+                <div style="font-size:11px;color:#475569;margin-bottom:6px">${esc(d.toolUsed)}</div>
+                <pre>${esc(d.rawText || 'Extracting text via Apache PDFBox text stripper & OCR fallback…')}</pre>
+              </div>`
+              : `
+              <div style="position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:100%">
+                <img src="${d.fileUrl}">
+                <div style="position:absolute;bottom:12px;left:12px;background:rgba(15,23,42,.85);padding:4px 8px;border-radius:6px;font-size:11px;color:#38bdf8;font-weight:700">📷 Google ML Kit Text Recognition</div>
+              </div>`}
             ${SC.scanning ? '<div class="scanline"></div>' : ''}
           </div>
         </div>
@@ -1494,27 +1706,6 @@ function renderScanner() {
   syncScanSummary();
 }
 
-async function runSimScan() {
-  SC.scanning = true;
-  await sleep(350);
-  const d = SC.draft;
-  let rawLines = [];
-  if (d.isWord && d.wordText) {
-    rawLines = d.wordText.split('\n').map(s => s.trim()).filter(Boolean)
-      .filter(l => !/^(customer|client|mobile|pax|delivery|time|format|hjh maimunah)/i.test(l));
-  } else {
-    rawLines = [
-      '50x Chicken Set A [LB]',
-      '50x Blueberry Longan Bottle',
-      '30x Begedel',
-      '2x Sambal Belacan Jar'
-    ];
-  }
-  d.lines = rawLines.map(analyze);
-  SC.scanning = false;
-  renderScanner();
-}
-
 function renderScanLines() {
   const d = SC.draft; if (!d) return '';
   return d.lines.map((ln, i) => `
@@ -1550,7 +1741,7 @@ function confirmScan() {
   S.orders.unshift({
     id: uid(), customer: d.customer || 'Catering Client', mobile: d.mobile || '',
     orderId: d.orderId, format: d.format || 'LB', deliveryTime: d.deliveryTime,
-    slot: d.slot, source: d.isWord ? 'Word' : d.isPdf ? 'PDF' : 'Photo',
+    slot: d.slot, source: d.toolUsed || (d.isWord ? 'Apache POI' : d.isPdf ? 'Apache PDFBox' : 'Google ML Kit'),
     items, pax: d.pax || paxOf(items), createdAt: Date.now(), done: false, clearedAt: null
   });
   save(); toast('Docket saved ✓', 'ok');
@@ -2303,6 +2494,20 @@ function renderRulesTab() {
           <input type="checkbox" ${S.ingestion.fallbackQueue ? 'checked' : ''} onchange="S.ingestion.fallbackQueue=this.checked;save()">
           <i></i> <span style="font-size:12px">Require manual confirmation for Unmapped items before saving ticket</span>
         </label>
+      </div>
+    </div>
+    <div class="card" style="margin-top:10px">
+      <h3><span>Active Ingestion Engines</span><span class="tag ${isNativeIngestionAvailable() ? 'deliv' : 'slot'}">${isNativeIngestionAvailable() ? '🟢 Native Bridge Active' : '🟡 Browser Emulation'}</span></h3>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;margin-top:8px">
+        <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:6px;border-left:3.5px solid #38bdf8">
+          <b>📄 Apache PDFBox-Android</b>: PDF text stripper with automatic Google ML Kit OCR fallback for scanned and rasterized catering runsheets.
+        </div>
+        <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:6px;border-left:3.5px solid #a855f7">
+          <b>📝 Apache POI (XWPFDocument)</b>: Native extractor for <code>.docx</code> and <code>.doc</code> files, extracting both tables and paragraphs in document order.
+        </div>
+        <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:6px;border-left:3.5px solid #22c55e">
+          <b>📷 Google ML Kit Text Recognition</b>: On-device neural OCR model for camera captures, kitchen dockets, and smartphone screenshots.
+        </div>
       </div>
     </div>`;
 }

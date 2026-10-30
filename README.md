@@ -15,10 +15,11 @@
 - **🔥 Dual Batch Aggregation**:
   - **Cook (Exploded)**: Automatically explodes catering sets (e.g., Chicken Set A, Mini Buffet) into individual station dishes (Rice, Proteins, Vegetables, Sides) for wok and fryer chefs.
   - **Pack (Sets)**: Retains set packages for assembly packing tables.
-- **📥 Multi-Channel Ingestion**:
-  - Word Document (`.docx`, `.doc`) Runsheet parsing
-  - Camera & Image OCR fuzzy matching
-  - Manual docket entry with format detection
+- **📥 Multi-Channel Native Ingestion**:
+  - **Apache PDFBox-Android**: PDF text stripper with automatic Google ML Kit OCR fallback for scanned & rasterized PDFs.
+  - **Apache POI (`XWPFDocument` / `HWPFDocument`)**: Word document ingestion extracting both tables and paragraphs in document order for `.docx` and `.doc` catering runsheets.
+  - **Google ML Kit Text Recognition**: Neural on-device OCR engine for camera photos, physical dockets, and screenshots.
+  - Manual docket entry with format detection and V23 fuzzy matching confidence scoring.
 - **🖨️ LAN Thermal Ticket Printing**:
   - Raw 9100 ESC/POS network printing for Hot Kitchen, Drinks Bar, Dessert Station, and Order Dockets.
 - **📶 100% Offline Capable**: Single-page application, zero external runtime dependencies.

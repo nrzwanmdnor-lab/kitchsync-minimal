@@ -14,6 +14,9 @@ import android.webkit.WebViewClient;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.kitchsync.app.ingestion.IngestionBridge;
+import com.kitchsync.app.ingestion.PdfBoxIngestion;
+
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
@@ -24,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Apache PDFBox-Android Resource Loader
+        PdfBoxIngestion.init(this);
 
         webView = new WebView(this);
         setContentView(webView);
@@ -41,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setSupportZoom(false);
+
+        // Register Native Ingestion Bridge for Apache PDFBox, Apache POI, and Google ML Kit
+        IngestionBridge bridge = new IngestionBridge(this, webView);
+        webView.addJavascriptInterface(bridge, "AndroidBridge");
+        webView.addJavascriptInterface(bridge, "NativeIngest");
 
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
