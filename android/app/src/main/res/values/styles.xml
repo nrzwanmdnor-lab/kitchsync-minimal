@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.KitchSync" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#09090B</item>
+        <item name="android:navigationBarColor">#0C0C0E</item>
+        <item name="android:windowBackground">#040406</item>
+    </style>
+</resources>

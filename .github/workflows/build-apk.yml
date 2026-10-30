@@ -1,0 +1,82 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Package APK
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          gradle wrapper --gradle-version 8.5
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Prepare APK Output
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/KitchSync-Minimal.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KitchSync-Minimal-APK
+          path: dist/KitchSync-Minimal.apk
+          if-no-files-found: error
+
+      - name: Create Release & Publish APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v1.0.0
+          name: "KitchSync Minimal APK v1.0.0"
+          draft: false
+          prerelease: false
+          body: |
+            ### 📱 KitchSync Minimal Android APK
+            
+            Android Kitchen Display System (KDS) and Catering Batch Aggregator preloaded with the **Hjh Maimunah Restaurant Pte Ltd V23 Menu Master**.
+            
+            #### 🌟 Features
+            - **Mobile-First Layout**: High-contrast dark theme optimized for hand-held Android mobile operations.
+            - **Catering Formats**: Native support for `[MBC]` Mini Buffet, `[LB]` Lunchbox, `[BSU]` Buffet Set Up, and `[BB]` Bento Box.
+            - **Dual Batch Aggregation**:
+              - 🔥 **Cook Mode**: Explodes package sets into station ingredients (woks, fryers, rice cookers).
+              - 📦 **Pack Mode**: Retains finished packages for packing table assembly.
+            - **Automated Lead Times**:
+              - `BSU` Buffet Set Up: Delivery − 2.0 hr (120 min lead buffer).
+              - `MBC`, `LB`, `BB`: Delivery − 1.5 hr (90 min kitchen prep).
+            - **Multi-Source Ingestion**:
+              - Microsoft Word runsheet parsing (`.docx`, `.doc`).
+              - Camera & image OCR with fuzzy matching confidence scores.
+            - **LAN Thermal Tickets**: ESC/POS network ticket generation for Hot Kitchen, Drinks Bar, Dessert Station, and Order Dockets.
+            
+            #### 📲 Download & Installation
+            Download the attached **`KitchSync-Minimal.apk`** below and install it directly on your Android device.
+          files: dist/KitchSync-Minimal.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
