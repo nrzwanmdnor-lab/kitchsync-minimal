@@ -12,7 +12,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,600&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+    }
+  </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -114,7 +119,18 @@ body {
 .mono, .font-mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Sticky Minimal App Bar */
-header.app-header {
+headerhtml, body {
+  max-width: 100vw;
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+.app-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 10px 24px;
@@ -125,6 +141,8 @@ header.app-header {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 .brand-group {
   display: flex;
@@ -597,8 +615,70 @@ input:focus, select:focus, textarea:focus {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Bottom Bar (hidden in clean desktop mode, available on mobile) */
-@media (max-width: 640px) {
+/* Responsive Header & Bottom Navigation Bar */
+.nav-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--ink-secondary);
+  border-radius: 999px;
+  padding: 1px 6px;
+  margin-left: 4px;
+  line-height: 1.2;
+}
+nav.bot button.on .nav-badge {
+  background: var(--primary-accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 8px 12px;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  /* On mobile, bottom navigation bar handles tab routing cleanly with zero horizontal overflow */
+  .header-nav {
+    display: none !important;
+  }
+  .brand-group {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-size: 15px;
+  }
+  .brand-os {
+    display: none;
+  }
+  .header-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .pax-badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  .header-actions .btn.accent {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  .theme-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  main#app {
+    padding: 12px 12px 80px 12px !important;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
   nav.bot {
     position: fixed;
     inset-inline: 0;
@@ -606,25 +686,29 @@ input:focus, select:focus, textarea:focus {
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
-    z-index: 30;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
   nav.bot button {
     flex: 1;
-    padding: 10px 4px;
+    padding: 8px 4px;
     background: transparent;
     border: none;
     color: var(--ink-secondary);
     font-size: 11px;
     font-weight: 500;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
   }
   nav.bot button.on {
     color: var(--ink);
     font-weight: 600;
   }
-  /* .header-nav always visible */
 }
-@media (min-width: 641px) {
+@media (min-width: 769px) {
   nav.bot { display: none; }
 }
 </style>
@@ -1169,10 +1253,17 @@ function updateHeaderBadges() {
   const { items, unassigned } = computeReverseSchedule();
   const scheduleCount = items.length + unassigned.length;
 
+  // Header Badges (Desktop)
   const hOrders = document.getElementById('headBadgeOrders');
   if (hOrders) hOrders.textContent = totalOrders;
   const hDash = document.getElementById('headBadgeDash');
   if (hDash) hDash.textContent = scheduleCount;
+
+  // Bottom Navigation Badges (Mobile & Tablet)
+  const nOrders = document.getElementById('navBadgeOrders');
+  if (nOrders) nOrders.textContent = totalOrders;
+  const nDash = document.getElementById('navBadgeDash');
+  if (nDash) nDash.textContent = scheduleCount;
 
   // Sync active states on header nav buttons
   const isOrders = activeTab === 'orders';
@@ -1733,24 +1824,51 @@ function renderSettingsView() {
       </div>
     </div>
 
-    <div class="card">
-      <div class="cond-title">Bulk CSV Import & Upload</div>
-      <p class="mute" style="font-size:13px; margin-top:2px;">
-        Paste CSV text or upload spreadsheet with columns: <code>name, station, group, aliases, batch_cook</code>
-      </p>
-
-      <div class="row" style="margin-top:10px;">
-        <input type="file" id="csvFileInput" accept=".csv,.tsv,.xlsx,.xls,.json" onchange="handleMenuFileImport(this.files[0])">
-        <button class="btn ghost sm" onclick="pasteSampleCsvTemplate()">📋 Paste Sample CSV Template</button>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="row sp" style="margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div>
+          <div class="cond-title" style="margin:0;">Bulk Catalog Import (CSV, Excel, JSON)</div>
+          <p class="mute" style="font-size:12.5px; margin-top:2px;">
+            Upload spreadsheet (.csv, .xlsx, .xls) or JSON menu files. Auto-detects columns, dishes, and stations.
+          </p>
+        </div>
+        <button class="btn ghost sm" onclick="pasteSampleCsvTemplate()" title="Paste template">📋 Sample Template</button>
       </div>
 
-      <textarea id="csvPasteArea" placeholder="name,station,group,aliases,batch_cook&#10;Sambal Squid,Hot Kitchen,Seafood,sambal sotong|sotong,1&#10;Bandung Selasih,Drinks,Cold Drinks,rose bandung,1"></textarea>
-      
-      <div class="row" style="margin-top:8px; gap:8px; flex-wrap:wrap;">
-        <button class="btn sm accent" onclick="importPastedCsv()">📥 Import Pasted CSV</button>
-        <button class="btn sm ghost" onclick="clearCsvPasteArea()" title="Clear textarea">🧹 Clear CSV Text</button>
-        <button class="btn sm" style="background:#16a34a; color:#fff; border:none; font-weight:600;" onclick="saveAndApplyCsv()" title="Import CSV and save to Menu Master">💾 Save & Apply</button>
-        <button class="btn ghost sm" onclick="exportMenuToCsv()">📤 Export Menu as CSV</button>
+      <!-- Dedicated Drag-and-Drop & File Picker Strip -->
+      <div class="menu-upload-strip" id="menuDropZone"
+           ondragover="event.preventDefault(); this.style.borderColor='var(--primary-accent)';"
+           ondragleave="this.style.borderColor='var(--border-light)';"
+           ondrop="event.preventDefault(); this.style.borderColor='var(--border-light)'; if(event.dataTransfer && event.dataTransfer.files.length) handleMenuFileImport(event.dataTransfer.files[0]);"
+           onclick="$('#menuFileInput').click()"
+           style="cursor:pointer; border:1.5px dashed var(--border-light); background:var(--surface-subtle); border-radius:8px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; transition:border-color 0.15s ease;">
+        <input type="file" id="menuFileInput" accept=".csv,.tsv,.xlsx,.xls,.json,.txt" style="display:none" onchange="handleMenuFileImport(this.files[0])">
+        <div class="row" style="gap:12px;">
+          <span style="font-size:22px;">📁</span>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:var(--ink);">Choose CSV / Excel / JSON file to import</div>
+            <div class="mute" style="font-size:11.5px;">Supports Hjh Maimunah V23 master (.csv), multi-sheet Excel (.xlsx), and JSON</div>
+          </div>
+        </div>
+        <button type="button" class="btn ghost sm" onclick="event.stopPropagation(); $('#menuFileInput').click();" style="pointer-events:none;">Browse Files</button>
+      </div>
+
+      <!-- Textarea for Pasted or Imported Content -->
+      <div style="font-size:12px; font-weight:500; color:var(--ink-secondary); margin-bottom:4px;">
+        Or Paste / Inspect Catalog Text:
+      </div>
+      <textarea id="csvPasteArea" style="width:100%; height:90px; font-family:'JetBrains Mono',monospace; font-size:11.5px; background:var(--surface-subtle); border:1px solid var(--border); border-radius:6px; padding:8px; color:var(--ink); resize:vertical;" placeholder="name,station,group,aliases,batch_cook&#10;Sambal Squid,Hot Kitchen,Seafood,sambal sotong|sotong,1&#10;Bandung Selasih,Drinks,Cold Drinks,rose bandung,1"></textarea>
+
+      <div class="row" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+        <button class="btn sm" style="background:#16a34a; color:#fff; border:none; font-weight:600;" onclick="saveAndApplyCsv()" title="Import text and save to Menu Master">
+          💾 Import Pasted Text &amp; Apply
+        </button>
+        <button class="btn sm ghost" onclick="clearCsvPasteArea()" title="Clear textarea">
+          🧹 Clear Text
+        </button>
+        <button class="btn ghost sm" onclick="exportMenuToCsv()" title="Export current catalog">
+          📤 Export Current Menu as CSV
+        </button>
       </div>
     </div>
 
@@ -3285,33 +3403,90 @@ Bubur Cha Cha,Dessert,Chilled,sweet potato yam dessert,1`;
   toast('Sample CSV template filled!');
 }
 
-function importPastedCsv() {
-  const text = $('#csvPasteArea').value.trim();
-  if (!text) { toast('Please paste CSV text first'); return; }
-  try {
-    const wb = XLSX.read(text, { type: 'string' });
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-    let count = 0;
-    rows.forEach(r => {
-      const n = r.name || r.Name || r.dish || r.Dish;
-      if (!n) return;
-      const st = r.station || r.Station || 'Hot Kitchen';
-      const g = r.group || r.Group || 'General';
-      const al = (r.aliases || r.Aliases || '').split('|').map(s => s.trim()).filter(Boolean);
-      const b = r.batch_cook !== undefined ? (parseInt(r.batch_cook, 10) || 1) : 1;
-      
-      const existing = S.menu.find(m => norm(m.n) === norm(n));
-      if (!existing) {
-        S.menu.push({ n, st, g, al, b });
-        count++;
+/* Pure-JS RFC 4180 CSV / TSV / Delimited Parser with Smart Column Detection */
+function parseAnyCsvOrTsv(text) {
+  if (!text || !text.trim()) return [];
+  // Strip UTF-8 BOM if present
+  let clean = text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text;
+  const lines = clean.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) return [];
+
+  function parseLine(line, delim) {
+    const res = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQuotes && line[i+1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === delim && !inQuotes) {
+        res.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
       }
-    });
-    saveState();
-    toast(`Successfully imported ${count} new dish(es)!`);
-    renderApp();
-  } catch (e) {
-    toast('Error reading CSV format');
+    }
+    res.push(cur.trim());
+    return res;
   }
+
+  // Detect delimiter
+  const first = lines[0];
+  let delim = ',';
+  if ((first.match(/\t/g) || []).length > (first.match(/,/g) || []).length) delim = '\t';
+  else if ((first.match(/;/g) || []).length > (first.match(/,/g) || []).length) delim = ';';
+
+  const rawHeaders = parseLine(lines[0], delim).map(h => h.toLowerCase().replace(/[^a-z0-9_]/g, ''));
+
+  // Column matching
+  let nameIdx = rawHeaders.findIndex(h => /^(name|dish|item|dishname|menuitem|product)$/.test(h));
+  if (nameIdx === -1) nameIdx = rawHeaders.findIndex(h => h.includes('name') || h.includes('dish') || h.includes('item'));
+  if (nameIdx === -1 && rawHeaders.includes('sku')) nameIdx = 1; // standard Hjh Maimunah layout: sku, name
+  if (nameIdx === -1) nameIdx = 0;
+
+  let stnIdx = rawHeaders.findIndex(h => /^(station|dept|kitchen|stn|st)$/.test(h));
+  let grpIdx = rawHeaders.findIndex(h => /^(group|category|kategori|unit|type|g)$/.test(h));
+  let aliasIdx = rawHeaders.findIndex(h => /^(aliases|alias|aka|keywords|al)$/.test(h));
+  let batchIdx = rawHeaders.findIndex(h => /^(batch_cook|batch|batchcook|b)$/.test(h));
+
+  const items = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseLine(lines[i], delim);
+    if (!cols || cols.length <= nameIdx) continue;
+    let name = cols[nameIdx];
+    if (!name || name.length < 2) continue;
+    // Strip leading/trailing quotes
+    name = name.replace(/^["']|["']$/g, '').trim();
+
+    // Determine Station
+    let station = stnIdx >= 0 && cols[stnIdx] ? cols[stnIdx].replace(/^["']|["']$/g, '').trim() : '';
+    const normStn = station.toLowerCase();
+    if (/air|drink|minuman|beverage|teh|kopi/.test(normStn)) station = 'Drinks';
+    else if (/kueh|kuih|dessert|pudding|cendol|sweet/.test(normStn)) station = 'Dessert';
+    else if (/hot|kitchen|ayam|daging|beef|chicken|fish|sayur|sotong|udang/.test(normStn)) station = 'Hot Kitchen';
+    else {
+      // Fallback: Infer station from dish name
+      const normN = name.toLowerCase();
+      if (/teh|kopi|tea|coffee|air|drink|bandung|juice|syrup|water/.test(normN)) station = 'Drinks';
+      else if (/kuih|kueh|dessert|pudding|cendol|pengat|cake/.test(normN)) station = 'Dessert';
+      else station = 'Hot Kitchen';
+    }
+
+    let group = grpIdx >= 0 && cols[grpIdx] ? cols[grpIdx].replace(/^["']|["']$/g, '').trim() : 'General';
+    let aliases = [];
+    if (aliasIdx >= 0 && cols[aliasIdx]) {
+      aliases = cols[aliasIdx].replace(/^["']|["']$/g, '').split('|').map(s => s.trim()).filter(Boolean);
+    }
+    let batch = batchIdx >= 0 && cols[batchIdx] !== '' ? (parseInt(cols[batchIdx], 10) || 1) : 1;
+
+    items.push({ n: name, st: station, g: group, al: aliases, b: batch });
+  }
+  return items;
 }
 
 async function handleMenuFileImport(file) {
@@ -3319,64 +3494,197 @@ async function handleMenuFileImport(file) {
   toast(`Reading ${file.name}...`, '⏳');
   try {
     const ext = file.name.split('.').pop().toLowerCase();
+    let importedDishes = [];
+
     if (ext === 'json') {
-      const data = JSON.parse(await file.text());
-      const arr = Array.isArray(data) ? data : (data.menu || []);
-      let count = 0;
+      const text = await file.text();
+      const area = $('#csvPasteArea');
+      if (area) area.value = text;
+      const data = JSON.parse(text);
+      const arr = Array.isArray(data) ? data : (data.menu || data.dishes || data.items || []);
       arr.forEach(r => {
-        const n = r.name || r.n;
+        const n = r.name || r.n || r.dish || r.item;
         if (!n) return;
         const st = r.station || r.st || 'Hot Kitchen';
         const g = r.group || r.g || 'General';
         const al = r.aliases || r.al || [];
         const b = r.batch_cook !== undefined ? r.batch_cook : (r.b !== undefined ? r.b : 1);
-        if (!S.menu.some(m => norm(m.n) === norm(n))) {
-          S.menu.push({ n, st, g, al: Array.isArray(al) ? al : String(al).split('|').map(s=>s.trim()).filter(Boolean), b });
-          count++;
-        }
+        importedDishes.push({
+          n,
+          st,
+          g,
+          al: Array.isArray(al) ? al : String(al).split('|').map(s => s.trim()).filter(Boolean),
+          b
+        });
       });
-      saveState();
-      toast(`Imported ${count} dish(es) from JSON!`);
-      renderApp();
-    } else {
+
+    } else if (ext === 'xlsx' || ext === 'xls') {
+      // Excel File Extraction (all sheets)
+      if (typeof XLSX === 'undefined') {
+        throw new Error('SheetJS library is initializing. Please retry in a moment.');
+      }
       const buff = await file.arrayBuffer();
       const wb = XLSX.read(buff, { type: 'array' });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-      let count = 0;
-      rows.forEach(r => {
-        const n = r.name || r.Name || r.dish || r.Dish || r.n;
-        if (!n) return;
-        const st = r.station || r.Station || 'Hot Kitchen';
-        const g = r.group || r.Group || 'General';
-        const al = (r.aliases || r.Aliases || '').split('|').map(s => s.trim()).filter(Boolean);
-        const b = r.batch_cook !== undefined ? (parseInt(r.batch_cook, 10) || 1) : 1;
-        if (!S.menu.some(m => norm(m.n) === norm(n))) {
-          S.menu.push({ n, st, g, al, b });
-          count++;
-        }
+      let allRows = [];
+      wb.SheetNames.forEach(sheetName => {
+        const sheet = wb.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        allRows = allRows.concat(rows);
       });
-      saveState();
-      toast(`Imported ${count} dish(es) from ${file.name}!`);
-      renderApp();
+
+      // Also convert to CSV for inspection
+      if (wb.SheetNames.length > 0) {
+        const csvPreview = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+        const area = $('#csvPasteArea');
+        if (area) area.value = csvPreview;
+      }
+
+      allRows.forEach(r => {
+        const n = r.name || r.Name || r.dish || r.Dish || r.item || r.Item || r.n;
+        if (!n || String(n).trim().length < 2) return;
+        let st = r.station || r.Station || r.dept || r.Dept || '';
+        const normSt = String(st).toLowerCase();
+        if (/air|drink|minuman|beverage|teh|kopi/.test(normSt)) st = 'Drinks';
+        else if (/kueh|kuih|dessert|pudding|cendol|sweet/.test(normSt)) st = 'Dessert';
+        else if (/hot|kitchen|ayam|daging|beef|chicken|fish|sayur|sotong|udang/.test(normSt)) st = 'Hot Kitchen';
+        else {
+          const normN = String(n).toLowerCase();
+          if (/teh|kopi|tea|coffee|air|drink|bandung|juice|syrup|water/.test(normN)) st = 'Drinks';
+          else if (/kuih|kueh|dessert|pudding|cendol|pengat|cake/.test(normN)) st = 'Dessert';
+          else st = 'Hot Kitchen';
+        }
+        const g = r.group || r.Group || r.category || r.Category || r.unit || 'General';
+        const rawAl = r.aliases || r.Aliases || r.alias || '';
+        const al = Array.isArray(rawAl) ? rawAl : String(rawAl).split('|').map(s => s.trim()).filter(Boolean);
+        const b = r.batch_cook !== undefined ? (parseInt(r.batch_cook, 10) || 1) : 1;
+        importedDishes.push({ n: String(n).trim(), st, g: String(g).trim(), al, b });
+      });
+
+    } else {
+      // CSV, TSV, TXT files (Uses built-in RFC 4180 parser)
+      const text = await file.text();
+      const area = $('#csvPasteArea');
+      if (area) area.value = text;
+      importedDishes = parseAnyCsvOrTsv(text);
     }
-  } catch (e) {
-    console.error(e);
-    toast(`Could not parse ${file.name}`);
+
+    if (!importedDishes || importedDishes.length === 0) {
+      toast(`No dishes could be extracted from ${file.name}. Please check column headers.`, '⚠️');
+      return;
+    }
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    importedDishes.forEach(d => {
+      const idx = S.menu.findIndex(m => norm(m.n) === norm(d.n));
+      if (idx !== -1) {
+        // Update existing dish
+        S.menu[idx].st = d.st || S.menu[idx].st;
+        S.menu[idx].g = d.g || S.menu[idx].g;
+        if (d.al && d.al.length) {
+          S.menu[idx].al = Array.from(new Set([...(S.menu[idx].al || []), ...d.al]));
+        }
+        S.menu[idx].b = d.b !== undefined ? d.b : S.menu[idx].b;
+        updatedCount++;
+      } else {
+        // Append new dish
+        S.menu.push(d);
+        addedCount++;
+      }
+    });
+
+    saveState();
+    toast(`✅ Imported ${file.name}: +${addedCount} new, ${updatedCount} updated! (Total: ${S.menu.length})`, '🎉');
+    renderApp();
+    updateHeaderBadges();
+
+  } catch (err) {
+    console.error('Menu import error:', err);
+    toast(`Could not parse ${file.name}: ${err.message}`, '❌');
   }
 }
 
+function importPastedCsv() {
+  const area = $('#csvPasteArea');
+  const text = area ? area.value.trim() : '';
+  if (!text) {
+    toast('Please paste CSV / text first into the box above');
+    return;
+  }
+  try {
+    let dishes = [];
+    if (text.startsWith('[') || text.startsWith('{')) {
+      const data = JSON.parse(text);
+      const arr = Array.isArray(data) ? data : (data.menu || data.dishes || []);
+      dishes = arr.map(r => ({
+        n: r.name || r.n || r.dish,
+        st: r.station || r.st || 'Hot Kitchen',
+        g: r.group || r.g || 'General',
+        al: Array.isArray(r.aliases) ? r.aliases : (r.aliases ? String(r.aliases).split('|').map(s=>s.trim()).filter(Boolean) : []),
+        b: r.batch_cook !== undefined ? r.batch_cook : 1
+      })).filter(d => d.n);
+    } else {
+      dishes = parseAnyCsvOrTsv(text);
+    }
+
+    if (!dishes.length) {
+      toast('No valid dishes found in pasted text. Format: name,station,group,aliases,batch_cook', '⚠️');
+      return;
+    }
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    dishes.forEach(d => {
+      const idx = S.menu.findIndex(m => norm(m.n) === norm(d.n));
+      if (idx !== -1) {
+        S.menu[idx].st = d.st;
+        S.menu[idx].g = d.g;
+        if (d.al && d.al.length) S.menu[idx].al = Array.from(new Set([...(S.menu[idx].al || []), ...d.al]));
+        S.menu[idx].b = d.b;
+        updatedCount++;
+      } else {
+        S.menu.push(d);
+        addedCount++;
+      }
+    });
+
+    saveState();
+    toast(`✅ Applied pasted catalog: +${addedCount} new, ${updatedCount} updated (Total: ${S.menu.length})`);
+    renderApp();
+    updateHeaderBadges();
+
+  } catch (e) {
+    console.error(e);
+    toast('Error reading pasted text: ' + e.message, '❌');
+  }
+}
+
+function saveAndApplyCsv() {
+  importPastedCsv();
+  saveMenuMaster();
+}
+
 function exportMenuToCsv() {
-  const ws = XLSX.utils.json_to_sheet(S.menu.map(m => ({
-    name: m.n,
-    station: m.st,
-    group: m.g,
-    aliases: (m.al || []).join('|'),
-    batch_cook: m.b
-  })));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Menu");
-  XLSX.writeFile(wb, "KitchSynx_Menu_Master.csv");
+  const headers = ['name', 'station', 'group', 'aliases', 'batch_cook'];
+  const rows = S.menu.map(m => [
+    `"${(m.n || '').replace(/"/g, '""')}"`,
+    `"${(m.st || '').replace(/"/g, '""')}"`,
+    `"${(m.g || '').replace(/"/g, '""')}"`,
+    `"${(m.al || []).join('|').replace(/"/g, '""')}"`,
+    m.b !== undefined ? m.b : 1
+  ].join(','));
+  const csvContent = headers.join(',') + '\n' + rows.join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `KitchSynx_Menu_Master_${Date.now()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Exported Menu Master as CSV file!');
 }
 
 /* ==========================================================================
