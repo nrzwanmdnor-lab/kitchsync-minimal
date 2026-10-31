@@ -50,17 +50,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: v1.3.1
-          name: "KitchSync Minimal APK v1.3.1 - Minimalist Clean UI, Custom Print Templates & Ingestion Bridge"
+          tag_name: v1.4.0
+          name: "KitchSync Minimal APK v1.4.0 - Built-in Kotlin Thermal Printer Engine & ESC-POS Protocol"
           draft: false
           prerelease: false
           make_latest: true
           body: |
-            ### 📱 KitchSync Minimal Android APK v1.3.1
+            ### 📱 KitchSync Minimal Android APK v1.4.0
             
             Android Kitchen Display System (KDS) and Catering Batch Aggregator for **Hjh Maimunah Restaurant Pte Ltd**.
             
-            #### 🚀 Release Updates (v1.3.1)
+            #### 🚀 Release Updates (v1.4.0)
             - **Native Ingestion Engines**:
               - **Apache PDFBox-Android**: High-speed PDF text stripper with automatic Google ML Kit OCR fallback for scanned and rasterized catering runsheets.
               - **Apache POI (`XWPFDocument` & `HWPFDocument`)**: Native Word document parser extracting both tables and paragraphs in document order for `.docx` and `.doc` files.

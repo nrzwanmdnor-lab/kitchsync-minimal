@@ -2044,15 +2044,21 @@ function renderSettingsView() {
         <div style="font-size:16px; font-weight:600; color:var(--ink);">Print Template &amp; LAN Hardware</div>
         <div class="mute" style="margin-top:1px;">Customizable receipt sizing, fonts, layout, and socket network routing</div>
       </div>
-      <div class="row" style="gap:8px;">
+      <div class="row" style="gap:8px; flex-wrap:wrap;">
+        <span class="tag ok sm" style="font-size:11px;">
+          ${isNativePrinterAvailable() ? '⚡ Kotlin Socket Ready' : '🌐 Browser Mode'}
+        </span>
+        <button class="btn sm" style="background:#0284c7; color:#fff; border:none; font-weight:600;" onclick="testPrinterSocket()" title="Ping local thermal printer socket">
+          📡 Ping Socket (${esc(S.pr.host)}:${S.pr.port})
+        </button>
         <button class="btn accent sm" onclick="savePrintTemplateSettings()" title="Save and persist template customization">
           💾 Save Template
         </button>
-        <button class="btn ghost sm" onclick="resetPrintTemplateToDefaults()" title="Reset all template sizes, fonts, and text to factory defaults">
-          ↺ Reset Defaults
+        <button class="btn ghost sm" onclick="resetPrintTemplateToDefaults()" title="Reset defaults">
+          🔄 Defaults
         </button>
-        <button class="btn ghost sm" onclick="openThermalModal('test')" title="Launch live printer simulation">
-          🖨️ Test Print Slip
+        <button class="btn ghost sm" onclick="openThermalModal('test')" title="Launch live printer preview">
+          🖨️ Preview Slip
         </button>
       </div>
     </div>
@@ -2415,6 +2421,79 @@ function simulateDrop(type) {
 }
 
 /* ============================== Ingestion Pipeline: Apache PDFBox, Apache POI & Google ML Kit ============================== */
+/* ============================== Built-in Kotlin Thermal Printer Native Bridge ============================== */
+const isNativePrinterAvailable = () => typeof window.AndroidPrinter !== 'undefined' && typeof window.AndroidPrinter.printChitJson === 'function';
+
+window._nativePrintCallbacks = window._nativePrintCallbacks || {};
+window.onNativePrintComplete = function(callbackId, result) {
+  const cb = window._nativePrintCallbacks[callbackId];
+  if (!cb) return;
+  delete window._nativePrintCallbacks[callbackId];
+  if (typeof result === 'string') {
+    try { result = JSON.parse(result); } catch (e) {}
+  }
+  if (result && result.success) {
+    cb.resolve(result);
+  } else {
+    cb.reject(new Error(result?.error || 'Thermal printer operation failed'));
+  }
+};
+
+function executeNativePrintChit(chitPayload) {
+  return new Promise((resolve, reject) => {
+    const cbId = 'prn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    window._nativePrintCallbacks[cbId] = { resolve, reject };
+    try {
+      const host = S.pr.host || '192.168.1.200';
+      const port = parseInt(S.pr.port, 10) || 9100;
+      window.AndroidPrinter.printChitJson(host, port, JSON.stringify(chitPayload), cbId);
+    } catch (e) {
+      delete window._nativePrintCallbacks[cbId];
+      reject(e);
+    }
+  });
+}
+
+function executeNativeTestConnection(host, port) {
+  return new Promise((resolve, reject) => {
+    const cbId = 'ping_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    window._nativePrintCallbacks[cbId] = { resolve, reject };
+    try {
+      window.AndroidPrinter.testConnection(host, port, cbId);
+    } catch (e) {
+      delete window._nativePrintCallbacks[cbId];
+      reject(e);
+    }
+  });
+}
+
+async function testPrinterSocket() {
+  const host = S.pr.host || '192.168.1.200';
+  const port = parseInt(S.pr.port, 10) || 9100;
+  toast(`Connecting to ${host}:${port}...`, '📡');
+
+  if (isNativePrinterAvailable()) {
+    try {
+      const res = await executeNativeTestConnection(host, port);
+      toast(`✅ Connected to Thermal Printer! Ping: ${res.latencyMs}ms (${host}:${port})`, '🖨️');
+    } catch (err) {
+      toast(`❌ Connection Failed to ${host}:${port}: ${err.message}`, '⚠️');
+    }
+  } else {
+    setTimeout(() => {
+      toast(`🌐 Web Preview: Socket simulated to ${host}:${port} (Android device required for raw LAN socket)`, 'ℹ️');
+    }, 600);
+  }
+}
+
+function printSystemChit() {
+  if (typeof window.AndroidPrinter !== 'undefined' && typeof window.AndroidPrinter.printSystem === 'function') {
+    window.AndroidPrinter.printSystem('KitchSynx_Chit');
+  } else {
+    window.print();
+  }
+}
+
 const isNativeIngestionAvailable = () => typeof window.AndroidBridge !== 'undefined' && typeof window.AndroidBridge.processFileAsync === 'function';
 
 function fileToBase64(file) {
@@ -3217,7 +3296,7 @@ function openThermalModal(mode = 'test', targetStation = 'Hot Kitchen', targetOr
         <button class="btn ghost sm" onclick="playThermalSound(); triggerFeedAnimation();">
           🔄 Feed & Re-simulate Print
         </button>
-        <button class="btn ghost sm" onclick="window.print()">
+        <button class="btn ghost sm" onclick="printSystemChit()">
           🌐 Browser Print Dialog
         </button>
         <button class="btn sm accent" onclick="sendLanSocketCommand()">
@@ -3273,13 +3352,79 @@ function testSocketConnection(showToast = true) {
   }, 350);
 }
 
-function sendLanSocketCommand() {
-  toast(`Raw ESC/POS packet dispatched to ${S.pr.host}:${S.pr.port}!`, '🚀');
-  playThermalSound();
-  setTimeout(() => {
-    closeModal();
-  }, 1000);
+function buildCurrentChitPayload() {
+  const modal = $('#modalHost');
+  const tpl = S.pr.tpl || DEF_PRINT_TEMPLATE;
+  const slipEl = $('#thermalReceiptSlip');
+
+  const items = [];
+  if (slipEl) {
+    slipEl.querySelectorAll('.t-row').forEach(row => {
+      const spans = row.querySelectorAll('span');
+      if (spans.length >= 3) {
+        const dish = spans[0].textContent.trim();
+        const time = spans[1].textContent.trim();
+        const qtyMatch = spans[2].textContent.match(/\d+/);
+        const qty = qtyMatch ? parseInt(qtyMatch[0], 10) : 1;
+        if (dish && dish !== 'DISH' && dish !== 'TOTAL PRODUCTION:') {
+          items.push({ dish, time, qty, remarks: '' });
+        }
+      }
+    });
+  }
+
+  if (!items.length) {
+    const { items: schedItems } = computeReverseSchedule();
+    schedItems.slice(0, 15).forEach(it => {
+      items.push({ dish: it.dish, time: it.cookStartMs ? formatTime(it.cookStartMs) : '--:--', qty: it.totalQty, remarks: '' });
+    });
+  }
+
+  const titleEl = modal ? modal.querySelector('.modal-header b') : null;
+  const titleText = titleEl ? titleEl.textContent.trim() : 'KITCHEN PRODUCTION CHIT';
+  
+  const dateEl = slipEl ? slipEl.querySelector('.t-bold') : null;
+  const dateText = dateEl ? dateEl.textContent.replace('EVENT DATE:', '').trim() : 'TODAY';
+
+  return {
+    widthMm: S.pr.w || 80,
+    masthead: tpl.masthead || 'HJH MAIMUNAH RESTAURANT PTE LTD',
+    subheader: tpl.subheader || 'Catering & Kitchen Production',
+    title: titleText,
+    deliveryDate: dateText,
+    deliveryTime: '',
+    customer: '',
+    format: '',
+    docRef: '',
+    items: items,
+    includeSignoff: tpl.driverSignoff !== false,
+    footer: S.pr.foot || 'KitchSynx Catering Automation System'
+  };
 }
+
+async function sendLanSocketCommand() {
+  const host = S.pr.host || '192.168.1.200';
+  const port = parseInt(S.pr.port, 10) || 9100;
+
+  if (isNativePrinterAvailable()) {
+    toast(`[Kotlin ThermalEngine] Streaming ESC/POS bytes to ${host}:${port}...`, '📡');
+    try {
+      const payload = buildCurrentChitPayload();
+      const res = await executeNativePrintChit(payload);
+      playThermalSound();
+      toast(`✅ Print Sent to ${host}:${port}! (${res.bytesSent} bytes, ${res.totalPortions} portions)`, '🖨️');
+      setTimeout(() => closeModal(), 1200);
+    } catch (err) {
+      console.error('Kotlin print error:', err);
+      toast(`❌ Printer Error (${host}:${port}): ${err.message}`, '⚠️');
+    }
+  } else {
+    toast(`Raw ESC/POS packet simulated to ${host}:${port}!`, '📡');
+    playThermalSound();
+    setTimeout(() => closeModal(), 1000);
+  }
+}
+
 
 /* ==========================================================================
    MENU & RULES MANAGEMENT ACTIONS

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.kitchsync.app.ingestion.IngestionBridge;
 import com.kitchsync.app.ingestion.PdfBoxIngestion;
+import com.kitchsync.app.printer.ThermalPrinter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
         IngestionBridge bridge = new IngestionBridge(this, webView);
         webView.addJavascriptInterface(bridge, "AndroidBridge");
         webView.addJavascriptInterface(bridge, "NativeIngest");
+
+        // Register Native Thermal Printer (Kotlin)
+        ThermalPrinter printer = new ThermalPrinter(this, webView);
+        webView.addJavascriptInterface(printer, "AndroidPrinter");
+        webView.addJavascriptInterface(printer, "ThermalPrinter");
 
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
